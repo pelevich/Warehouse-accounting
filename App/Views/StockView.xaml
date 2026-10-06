@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="App.Views.StockView">
+    <VerticalStackLayout 
+    BindableLayout.ItemsSource="{Binding InventoryItems}"
+    Spacing="10">
+
+        <BindableLayout.ItemTemplate>
+            <DataTemplate>
+                <HorizontalStackLayout Spacing="10">
+                    <Label Text="{Binding Name}" />
+                    <Label Text="{Binding Barcode}" />
+                    <Label Text="{Binding Quantity}" />
+                    <Label Text="{Binding Price}" />
+                    <Label Text="{Binding TotalAmount}" />
+                    <Button x:Name="DeleteButton"
+                        Command="{Binding DeleteItemCommand}"
+                        CommandParameter="{Binding .}"
+                        Text = "🗑️"
+                        TextColor="Red"/>
+                </HorizontalStackLayout>
+            </DataTemplate>
+        </BindableLayout.ItemTemplate>
+    </VerticalStackLayout>
+</ContentView>

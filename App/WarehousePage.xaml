@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="App.Views.WarehousePage">
+
+    <Grid ColumnDefinitions="200, *">
+        <!-- ЛЕВОЕ МЕНЮ (статичное) -->
+        <Border Grid.Column="0"
+            BackgroundColor="#2C3E50"
+            StrokeThickness="0">
+            <VerticalStackLayout Padding="10" Spacing="10">
+                
+                <Label Text="Складской учет"
+                   TextColor="White"
+                   FontSize="20"
+                   FontAttributes="Bold"
+                   HorizontalOptions="Center"
+                   Margin="0,20,0,30" />
+
+                <Button x:Name="InventoryButton"
+                    Text="📦 Склад"
+                    BackgroundColor="#34495E"
+                    TextColor="White"
+                    FontSize="16"
+                    HeightRequest="50"
+                    HorizontalOptions="Fill"
+                    CornerRadius="8" />
+
+                <Button x:Name="SaleButton"
+                    Text="💰 Продажа"
+                    BackgroundColor="#34495E"
+                    TextColor="White"
+                    FontSize="16"
+                    HeightRequest="50"
+                    HorizontalOptions="Fill"
+                    CornerRadius="8" />
+
+            </VerticalStackLayout>
+        </Border>
+        <Grid Grid.Column="1" RowDefinitions="Auto, *">
+            
+            <!-- Меню Склада -->
+            <HorizontalStackLayout Grid.Row="0">
+                <Button x:Name="CatalogButton"
+                        Command="{Binding ShowCatalogCommand}"
+                        Text="Каталог"/>
+
+                <Button x:Name="StockButton"
+                        Command="{Binding ShowStockCommand}"
+                        Text="Остаток"/>
+
+                <Button x:Name="ReceiptButton"
+                        Command="{Binding ShowReceiptCommand}"
+                        Text="Приход"/>
+            </HorizontalStackLayout>
+
+            <!-- ОБЛАСТЬ КОНТЕНТА -->
+            <ContentView Grid.Row="1"
+                        Content="{Binding CurrentView}">
+            </ContentView>
+        </Grid>
+    </Grid>
+</ContentPage>

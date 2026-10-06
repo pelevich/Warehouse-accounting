@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="App.Views.ReceiptView"
+             xmlns:vm="clr-namespace:App.ViewModels.Tabs">
+    <VerticalStackLayout>
+        <Label 
+            Text="Приход"
+            VerticalOptions="Center" 
+            HorizontalOptions="Center" />
+        <HorizontalStackLayout>
+            <Button x:Name="AddReceiptItemButton"
+            Command="{Binding AddReceiptItemCommand}"
+            Text="Добавить товар в приход +"/>
+        </HorizontalStackLayout>
+
+        <VerticalStackLayout 
+            BindableLayout.ItemsSource="{Binding ReceiptItemModels}"
+            Spacing="10">
+
+            <BindableLayout.ItemTemplate>
+                <DataTemplate>
+                    <HorizontalStackLayout Spacing="10">
+                        <Label Text="{Binding Name}" />
+                        <Button x:Name="DecrQuantityButton"
+                                Command="{Binding Source={RelativeSource AncestorType={x:Type vm:ReceiptViewModel}}, Path=DecrQuantityCommand}"
+                                Text = "-"
+                                CommandParameter="{Binding .}"
+                                IsEnabled="{Binding CanDecrement}"
+                                BorderColor="MediumVioletRed"
+                                CornerRadius="500"/>
+                        <Label Text="{Binding Quantity}" />
+                        <Button x:Name="IncrQuantityButton"
+                                Command="{Binding Source={RelativeSource AncestorType={x:Type vm:ReceiptViewModel}}, Path=IncrQuantityCommand}"
+                                CommandParameter="{Binding .}"
+                                Text = "+"
+                                BorderColor="MediumVioletRed"
+                                CornerRadius="500"/>
+                        <Button x:Name="DeleteButton"
+                                Command="{Binding Source={RelativeSource AncestorType={x:Type vm:ReceiptViewModel}}, Path=DeleteItemCommand}"
+                                CommandParameter="{Binding .}"
+                                Text = "🗑️"
+                                TextColor="Red"/>
+                    </HorizontalStackLayout>
+                </DataTemplate>
+            </BindableLayout.ItemTemplate>
+        </VerticalStackLayout>
+        <HorizontalStackLayout Spacing="10">
+            <Button x:Name="PushToStockButton"
+                    Text="Сохранить приход"
+                    Command="{Binding PushToStockCommand}"/>
+        </HorizontalStackLayout>
+    </VerticalStackLayout>
+</ContentView>

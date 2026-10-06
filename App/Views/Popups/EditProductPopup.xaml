@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<toolkit:Popup xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+               xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+               xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+               xmlns:vm="clr-namespace:App.ViewModels.Popups"
+               x:Class="App.Views.Popups.EditProductPopup"
+               x:DataType="vm:EditProductViewModel">
+
+    <VerticalStackLayout Padding="20" Spacing="15"
+                     WidthRequest="600"
+                     BackgroundColor="white">
+
+        <Label Text="Редактировать товар"
+           FontSize="20"
+           FontAttributes="Bold"
+           HorizontalOptions="Center" 
+           TextColor="Black"/>
+
+        <!-- Поля -->
+        <VerticalStackLayout Spacing="5">
+            <Label Text="Название:" FontAttributes="Bold"  TextColor="Black"/>
+            <Entry Text="{Binding Name}"
+               TextColor="Black"
+               Placeholder="Введите название" />
+            <Label Text="{Binding NameError}" FontAttributes="Bold"  TextColor="Red"/>
+        </VerticalStackLayout>
+
+        <VerticalStackLayout Spacing="5">
+            <Label Text="Цена:" FontAttributes="Bold" TextColor="Black"/>
+            <Entry Text="{Binding Price, StringFormat='{0:C}'}"
+               TextColor="Black"
+               Placeholder="0.00"
+               Keyboard="Numeric" />
+            <Label Text="{Binding PriceError}" FontAttributes="Bold"  TextColor="Red"/>
+        </VerticalStackLayout>
+
+        <VerticalStackLayout Spacing="5">
+            <Label Text="Штрих-код:" FontAttributes="Bold" TextColor="Black"/>
+            <HorizontalStackLayout>
+                <Entry Text="{Binding Barcode}"
+                       TextColor="Black"
+                       Placeholder="4607176800081"
+                       Keyboard="Numeric" />
+                <Button x:Name="CatalogButton"
+                       Command="{Binding GenerateBarcodeCommand}"
+                       Text="🔄"/>
+            </HorizontalStackLayout>
+            <Label Text="{Binding BarcodeError}" FontAttributes="Bold"  TextColor="Red"/>
+        </VerticalStackLayout>
+
+        <VerticalStackLayout Spacing="5">
+            <Label Text="Описание:" FontAttributes="Bold" TextColor="Black"/>
+            <Editor Text="{Binding Description}"
+                TextColor="Black"
+                Placeholder="Описание товара"
+                HeightRequest="80" />
+            <Label Text="{Binding DescriptionError}" FontAttributes="Bold"  TextColor="Red"/>
+        </VerticalStackLayout>
+
+        <!-- Кнопки -->
+        <Grid ColumnDefinitions="*, *" ColumnSpacing="10" Margin="0,10,0,0">
+            <Button Grid.Column="0"
+                Text="Отмена"
+                Command="{Binding CloseCommand}"
+                BackgroundColor="#6C757D"
+                TextColor="White" />
+
+            <Button Grid.Column="1"
+                Text="Сохранить"
+                Command="{Binding SaveCommand}"
+                BackgroundColor="#28A745"
+                TextColor="White" />
+        </Grid>
+    </VerticalStackLayout>
+
+</toolkit:Popup>

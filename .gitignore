@@ -1,0 +1,270 @@
+# =========================
+# .NET / C# / Visual Studio
+# =========================
+
+# Результаты сборки
+[Dd]ebug/
+[Rr]elease/
+x64/
+x86/
+[Aa][Rr][Mm]/
+[Aa][Rr][Mm]64/
+bld/
+[Bb]in/
+[Oo]bj/
+[Ll]og/
+[Ll]ogs/
+
+# Кэш и настройки Visual Studio
+.vs/
+
+# Visual Studio Code
+.vscode/
+
+# ReSharper
+_ReSharper*/
+*.[Rr]e[Ss]harper
+*.DotSettings.user
+
+# Rider
+.idea/
+
+# Пользовательские файлы
+*.rsuser
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+*.userprefs
+
+# Файлы, создаваемые Visual Studio
+*.obj
+*.exe
+*.pdb
+*.user
+*.aps
+*.pch
+*.vspscc
+*.vssscc
+*_i.c
+*_p.c
+*_h.h
+*.ncb
+*.suo
+*.tlb
+*.tlh
+*.bak
+*.cache
+*.ilk
+*.log
+*.lib
+*.sbr
+*.sdf
+*.opensdf
+*.opendb
+*.VC.db
+*.VC.VC.opendb
+
+# Бенчмарки
+[Bb]enchmark[Dd]ot[Nn]et/
+BenchmarkDotNet.Artifacts/
+
+# Пакеты NuGet
+*.nupkg
+*.snupkg
+**/[Pp]ackages/*
+!**/[Pp]ackages/build/
+*.nuget.props
+*.nuget.targets
+
+# Символьные пакеты NuGet
+*.snupkg
+
+# Бинарные и структурированные логи MSBuild
+*.binlog
+
+# =========================
+# MAUI / Xamarin
+# =========================
+
+# Выходные файлы сборки MAUI/Xamarin
+[Bb]in/
+[Oo]bj/
+[Dd]ebug/
+[Rr]elease/
+
+# Специфичные для MAUI
+*.binlog
+*.app
+*.ipa
+*.apk
+*.aab
+*.appx
+*.appxbundle
+*.appxupload
+*.msix
+*.msixbundle
+*.msixupload
+*.dSYM/
+*.dSYM.zip
+
+# Android
+*.keystore
+!debug.keystore
+*.apk
+*.aab
+*.dex
+*.class
+.cxx/
+jni/
+obj/
+libs/
+*.so
+*.swp
+
+# iOS / MacCatalyst
+*.ipa
+*.dSYM
+*.dSYM.zip
+*.xcuserstate
+xcuserdata/
+*.mdb
+*.pdb
+*.dylib
+*.a
+*.framework
+*.xcworkspace
+*.xcodeproj
+*.storyboardc
+*.nib
+*.momd
+*.mom
+*.xcdatamodeld
+*.xcdatamodel
+*.xcmappingmodel
+*.xcconfig
+*.xcsettings
+*.xcuserdatad
+*.xcscheme
+*.xcworkspacedata
+*.pbxuser
+*.mode1v3
+*.mode2v3
+*.perspectivev3
+*.pbxproj
+*.xib
+*.entitlements
+*.pch
+*.mobileprovision
+*.cer
+*.p12
+*.pfx
+*.certSigningRequest
+*.developerprofile
+*.provisionprofile
+
+# Windows
+*.appx
+*.appxbundle
+*.appxupload
+*.msix
+*.msixbundle
+*.msixupload
+*.pfx
+*.cer
+*.pvk
+*.spc
+*.crl
+*.p7b
+*.p7c
+*.p7m
+*.p7s
+*.sst
+*.stl
+*.ctl
+
+# =========================
+# ОС / Редакторы / Разное
+# =========================
+
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+*.lnk
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+Icon
+._*
+.DocumentRevisions-V100
+.fseventsd
+.Spotlight-V100
+.TemporaryItems
+.Trashes
+.VolumeIcon.icns
+.com.apple.timemachine.donotpresent
+.AppleDB
+.AppleDesktop
+Network Trash Folder
+Temporary Items
+.apdisk
+
+# Linux
+*~
+.fuse_hidden*
+.directory
+.Trash-*
+.nfs*
+
+# JetBrains Rider
+.idea/
+*.sln.iml
+
+# =========================
+# Специфично для проекта
+# =========================
+
+# Локальные файлы баз данных (SQLite)
+*.db
+*.db-shm
+*.db-wal
+*.sqlite
+*.sqlite3
+
+# Локальные настройки / секреты
+appsettings.Development.json
+appsettings.Local.json
+*.local.json
+secrets.json
+
+# Логи
+*.log
+logs/
+log/
+
+# Покрытие тестами / Результаты тестов
+[Tt]est[Rr]esult*/
+[Bb]uild[Ll]og.*
+*.VisualState.xml
+TestResult.xml
+coverage*.json
+coverage*.xml
+coverage*.info
+*.coverage
+*.coveragexml
+
+# Нативные библиотеки из папки Infrastructure/ext
+# Они копируются в выходную папку, но не должны попадать в репозиторий как бинарники
+ext/*.dll
+ext/*.dylib
+ext/*.so
+ext/*.a
+ext/*.lib
+
+# Исключения: если нужно хранить лицензии или документацию рядом с библиотеками
+!ext/*.txt
+!ext/*.md

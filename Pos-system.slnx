@@ -1,0 +1,9 @@
+<Solution>
+  <Project Path="App/App.csproj">
+    <Deploy Solution="Debug|*" />
+  </Project>
+  <Project Path="Domain/Domain.csproj" />
+  <Project Path="Infrastructure/Infrastructure.csproj" />
+  <Project Path="Pos-system.Test/Pos-system.Test.csproj" />
+  <Project Path="Services/Services.csproj" />
+</Solution>
