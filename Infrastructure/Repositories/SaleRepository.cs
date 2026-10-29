@@ -24,9 +24,13 @@ namespace Infrastructure.Repositories
         public async Task<IEnumerable<Sale>> GetAllAsync(CancellationToken ct = default)
         {
             return await _context.Sales
-                    .Include(f => f.Items)
-                    .AsNoTracking()
-                    .ToListAsync(ct);
+                .AsNoTracking()
+                .Include(s => s.WorkShift)
+                    .ThenInclude(w => w!.Employee)
+                .Include(s => s.Items)
+                    .ThenInclude(i => i.Product)
+                .AsSplitQuery()
+                .ToListAsync(ct);
         }
 
         public async Task<Sale> AddAsync(Sale saleItem, CancellationToken ct = default)

@@ -1,0 +1,364 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<toolkit:Popup xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+               xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+               xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+               xmlns:vm="clr-namespace:App.ViewModels.Popups"
+               x:Class="App.Views.Popups.ManageShiftPopup"
+               x:DataType="vm:ManageShiftViewModel">
+
+    
+    <!-- Одна карточка вместо белой рамки вокруг второй карточки -->
+    <Border WidthRequest="620"
+            BackgroundColor="White"
+            Stroke="#E1E8EF"
+            StrokeThickness="1"
+            StrokeShape="RoundRectangle 22">
+
+        <Grid RowDefinitions="Auto,Auto"
+              RowSpacing="0">
+
+            <!-- Шапка, как у Popup добавления товара -->
+            <Grid Grid.Row="0"
+                  Padding="28,24,28,22"
+                  ColumnDefinitions="*,Auto"
+                  ColumnSpacing="16">
+
+                <VerticalStackLayout Spacing="5">
+                    <Label Text="Закрытие смены"
+                           FontSize="24"
+                           FontAttributes="Bold"
+                           TextColor="#1F2937"/>
+
+                    <Label Text="Сверка наличных и итоговый отчёт"
+                           FontSize="13"
+                           TextColor="#718096"/>
+                </VerticalStackLayout>
+
+                <Border Grid.Column="1"
+                        Padding="14,8"
+                        BackgroundColor="#E8F4EC"
+                        StrokeThickness="0"
+                        StrokeShape="RoundRectangle 12"
+                        VerticalOptions="Start">
+                    <Label Text="КАССА"
+                           FontSize="11"
+                           FontAttributes="Bold"
+                           TextColor="#21834D"/>
+                </Border>
+            </Grid>
+
+            <Grid Grid.Row="1"
+                  RowDefinitions="Auto"
+                  BackgroundColor="#F7F9FB"
+                  Padding="28,24,28,26">
+
+                <!-- Состояние 1: сверка -->
+                <VerticalStackLayout IsVisible="{Binding IsInputVisible}"
+                                     Spacing="22">
+
+                    <Border BackgroundColor="#EDF6F0"
+                            Stroke="#DCECE1"
+                            StrokeThickness="1"
+                            StrokeShape="RoundRectangle 14"
+                            Padding="20,18">
+                        <VerticalStackLayout Spacing="8">
+                            <Label Text="Ожидаемый остаток"
+                                   FontSize="13"
+                                   FontAttributes="Bold"
+                                   TextColor="#385A46"/>
+
+                            <Label Text="{Binding ExpectedCashText}"
+                                   FontSize="30"
+                                   FontAttributes="Bold"
+                                   TextColor="#21834D"/>
+
+                            <Label Text="По наличным продажам текущей смены"
+                                   FontSize="12"
+                                   TextColor="#6B8373"/>
+                        </VerticalStackLayout>
+                    </Border>
+
+                    <VerticalStackLayout Spacing="9">
+                        <Label Text="Фактически в кассе"
+                               FontSize="13"
+                               FontAttributes="Bold"
+                               TextColor="#344256"/>
+
+                        <Border BackgroundColor="White"
+                                Stroke="#DCE5EE"
+                                StrokeThickness="1"
+                                StrokeShape="RoundRectangle 12"
+                                Padding="14,0">
+
+                            <Grid ColumnDefinitions="*,Auto"
+                                  ColumnSpacing="10">
+                                <Entry Grid.Column="0"
+                                       Text="{Binding ActualCashText, Mode=TwoWay}"
+                                       HeightRequest="52"
+                                       Keyboard="Numeric"
+                                       FontSize="19"
+                                       TextColor="#1F2937"
+                                       BackgroundColor="Transparent"
+                                       Placeholder="0,00"
+                                       PlaceholderColor="#94A3B8"/>
+
+                                <Label Grid.Column="1"
+                                       Text="₽"
+                                       FontSize="19"
+                                       TextColor="#64748B"
+                                       VerticalOptions="Center"/>
+                            </Grid>
+                        </Border>
+
+                        <Label Text="{Binding ErrorMessage}"
+                               IsVisible="{Binding HasError}"
+                               TextColor="#C23D3D"
+                               FontSize="12"
+                               LineBreakMode="WordWrap"/>
+                    </VerticalStackLayout>
+
+                    <Grid ColumnDefinitions="*,*"
+                          ColumnSpacing="12"
+                          Margin="0,8,0,0">
+
+                        <Button Grid.Column="0"
+                                Text="Отмена"
+                                Command="{Binding CancelCommand}"
+                                HeightRequest="50"
+                                CornerRadius="12"
+                                BackgroundColor="#E8EDF2"
+                                TextColor="#526174"
+                                FontAttributes="Bold"/>
+
+                        <Button Grid.Column="1"
+                                Text="Закрыть смену"
+                                Command="{Binding ConfirmCommand}"
+                                IsEnabled="{Binding IsNotBusy}"
+                                HeightRequest="50"
+                                CornerRadius="12"
+                                BackgroundColor="#238B51"
+                                TextColor="White"
+                                FontAttributes="Bold"/>
+                    </Grid>
+
+                    <ActivityIndicator IsRunning="{Binding IsBusy}"
+                                       IsVisible="{Binding IsBusy}"
+                                       Color="#238B51"/>
+                </VerticalStackLayout>
+
+                <!-- Состояние 2: итоговый отчёт -->
+                <VerticalStackLayout IsVisible="{Binding IsReportVisible}"
+                                     Spacing="18">
+
+                    <Border BackgroundColor="#E7F4EB"
+                            Stroke="#D4E9DA"
+                            StrokeThickness="1"
+                            StrokeShape="RoundRectangle 12"
+                            Padding="18,14">
+                        <Grid ColumnDefinitions="Auto,*" ColumnSpacing="12">
+                            <Label Text="✓"
+                                   FontSize="23"
+                                   FontAttributes="Bold"
+                                   TextColor="#21834D"
+                                   VerticalOptions="Center"/>
+                            <VerticalStackLayout Grid.Column="1" Spacing="3">
+                                <Label Text="Смена успешно закрыта"
+                                       FontSize="16"
+                                       FontAttributes="Bold"
+                                       TextColor="#21613B"/>
+                                <Label Text="Итоговый отчёт"
+                                       FontSize="12"
+                                       TextColor="#648271"/>
+                            </VerticalStackLayout>
+                        </Grid>
+                    </Border>
+
+                    <!-- Каждая строка в своей строке Grid: без наложения текста -->
+                    <Border
+                            BackgroundColor="White"
+                            Stroke="#E3EAF1"
+                            StrokeThickness="1"
+                            StrokeShape="RoundRectangle 14"
+                            Padding="18,16">
+
+                        <Grid
+                                ColumnDefinitions="180,*"
+                                RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto"
+                                RowSpacing="16"
+                                ColumnSpacing="14">
+
+                            <!-- Кассир -->
+                            <Label
+                                    Grid.Row="0"
+                                    Grid.Column="0"
+                                    Text="Кассир"
+                                    FontSize="13"
+                                    TextColor="#64748B"/>
+
+                            <Label
+                                    Grid.Row="0"
+                                    Grid.Column="1"
+                                    Text="{Binding EmployeeName}"
+                                    FontSize="13"
+                                    FontAttributes="Bold"
+                                    TextColor="#253244"
+                                    LineBreakMode="WordWrap"
+                                    HorizontalTextAlignment="End"/>
+
+                            <!-- Количество чеков -->
+                            <Label
+                                    Grid.Row="1"
+                                    Grid.Column="0"
+                                    Text="Количество продаж"
+                                    FontSize="13"
+                                    TextColor="#64748B"/>
+
+                            <Label
+                                    Grid.Row="1"
+                                    Grid.Column="1"
+                                    Text="{Binding SalesCount}"
+                                    FontSize="13"
+                                    FontAttributes="Bold"
+                                    TextColor="#253244"
+                                    HorizontalTextAlignment="End"/>
+
+                            <!-- Продано товаров -->
+                            <Label
+                                    Grid.Row="2"
+                                    Grid.Column="0"
+                                    Text="Продано товаров"
+                                    FontSize="13"
+                                    TextColor="#64748B"/>
+
+                            <Label
+                                    Grid.Row="2"
+                                    Grid.Column="1"
+                                    Text="{Binding SoldUnits}"
+                                    FontSize="13"
+                                    FontAttributes="Bold"
+                                    TextColor="#253244"
+                                    HorizontalTextAlignment="End"/>
+
+                            <!-- Общая выручка -->
+                            <Label
+                                    Grid.Row="3"
+                                    Grid.Column="0"
+                                    Text="Общая выручка"
+                                    FontSize="13"
+                                    TextColor="#64748B"/>
+
+                            <Label
+                                    Grid.Row="3"
+                                    Grid.Column="1"
+                                    Text="{Binding TotalRevenueText}"
+                                    FontSize="13"
+                                    FontAttributes="Bold"
+                                    TextColor="#253244"
+                                    HorizontalTextAlignment="End"/>
+
+                            <!-- Наличные -->
+                            <Label
+                                    Grid.Row="4"
+                                    Grid.Column="0"
+                                    Text="Выручка наличными"
+                                    FontSize="13"
+                                    TextColor="#64748B"/>
+
+                            <Label
+                                    Grid.Row="4"
+                                    Grid.Column="1"
+                                    Text="{Binding CashRevenueText}"
+                                    FontSize="13"
+                                    FontAttributes="Bold"
+                                    TextColor="#253244"
+                                    HorizontalTextAlignment="End"/>
+
+                            <!-- Карта -->
+                            <Label
+                                    Grid.Row="5"
+                                    Grid.Column="0"
+                                    Text="Выручка картой"
+                                    FontSize="13"
+                                    TextColor="#64748B"/>
+
+                            <Label
+                                    Grid.Row="5"
+                                    Grid.Column="1"
+                                    Text="{Binding CardRevenueText}"
+                                    FontSize="13"
+                                    FontAttributes="Bold"
+                                    TextColor="#253244"
+                                    HorizontalTextAlignment="End"/>
+
+                            <!-- Ожидаемый остаток -->
+                            <Label
+                                    Grid.Row="6"
+                                    Grid.Column="0"
+                                    Text="Ожидалось"
+                                    FontSize="13"
+                                    TextColor="#64748B"/>
+
+                            <Label
+                                    Grid.Row="6"
+                                    Grid.Column="1"
+                                    Text="{Binding ExpectedCashText}"
+                                    FontSize="13"
+                                    FontAttributes="Bold"
+                                    TextColor="#253244"
+                                    HorizontalTextAlignment="End"/>
+
+                            <!-- Фактический остаток -->
+                            <Label
+                                    Grid.Row="7"
+                                    Grid.Column="0"
+                                    Text="Фактически"
+                                    FontSize="13"
+                                    TextColor="#64748B"/>
+
+                            <Label
+                                    Grid.Row="7"
+                                    Grid.Column="1"
+                                    Text="{Binding ActualCashReportText}"
+                                    FontSize="13"
+                                    FontAttributes="Bold"
+                                    TextColor="#253244"
+                                    HorizontalTextAlignment="End"/>
+
+                        </Grid>
+                    </Border>
+
+                    <Border BackgroundColor="#EDF6F0"
+                            Stroke="#DCECE1"
+                            StrokeThickness="1"
+                            StrokeShape="RoundRectangle 12"
+                            Padding="18,15">
+
+                        <Grid ColumnDefinitions="*,Auto"
+                              ColumnSpacing="12">
+                            <Label Text="Расхождение"
+                                   FontSize="15"
+                                   FontAttributes="Bold"
+                                   TextColor="#344256"
+                                   VerticalOptions="Center"/>
+                            <Label Grid.Column="1"
+                                   Text="{Binding DifferenceText}"
+                                   TextColor="{Binding DifferenceColor}"
+                                   FontSize="18"
+                                   FontAttributes="Bold"
+                                   VerticalOptions="Center"/>
+                        </Grid>
+                    </Border>
+
+                    <Button Text="Готово"
+                            Command="{Binding DoneCommand}"
+                            HeightRequest="52"
+                            CornerRadius="12"
+                            BackgroundColor="#238B51"
+                            TextColor="White"
+                            FontAttributes="Bold"
+                            Margin="0,4,0,0"/>
+                </VerticalStackLayout>
+            </Grid>
+        </Grid>
+    </Border>
+</toolkit:Popup>

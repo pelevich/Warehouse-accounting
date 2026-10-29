@@ -1,0 +1,242 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="App.Views.Trade.SaleView"
+             x:Name="SaleRoot">
+
+    <!-- Обе колонки растягиваются на доступную высоту.
+         Последняя строка каждой колонки содержит кнопку. -->
+    <Grid ColumnDefinitions="*,*" ColumnSpacing="16" Padding="12">
+
+        <!-- ЛЕВАЯ КОЛОНКА: ЧЕК -->
+        <Grid Grid.Column="0"
+              RowDefinitions="Auto,Auto,*,Auto,Auto,Auto,Auto,Auto"
+              RowSpacing="10">
+
+            <HorizontalStackLayout Grid.Row="0" Spacing="12" VerticalOptions="Center">
+                <Label Text="Способ расчета" VerticalOptions="Center" />
+                <Picker ItemsSource="{Binding Options}"
+                        SelectedItem="{Binding SelectedOption}" />
+            </HorizontalStackLayout>
+
+            <Label Grid.Row="1" Text="Чек"
+                   FontSize="20" FontAttributes="Bold" />
+
+            <!-- Прокручивается только список позиций, а не весь чек. -->
+            <Border Grid.Row="2"
+                    Stroke="#666666"
+                    StrokeThickness="1"
+                    StrokeShape="RoundRectangle 10"
+                    Padding="4"
+                    MinimumHeightRequest="100">
+                <CollectionView ItemsSource="{Binding SaleItemModels}"
+                                VerticalOptions="Fill"
+                                SelectionMode="None">
+                    <CollectionView.EmptyView>
+                        <Label Text="В чеке пока нет товаров"
+                               TextColor="Gray"
+                               HorizontalTextAlignment="Center"
+                               VerticalOptions="Center"
+                               Margin="12" />
+                    </CollectionView.EmptyView>
+                    <CollectionView.ItemTemplate>
+                        <DataTemplate>
+                            <Grid ColumnDefinitions="*,Auto,Auto,Auto,Auto,Auto,Auto"
+                                  ColumnSpacing="7" Padding="8,6">
+                                <Label Grid.Column="0" Text="{Binding Name}"
+                                       VerticalOptions="Center"
+                                       LineBreakMode="TailTruncation" />
+                                <Button Grid.Column="1" Text="−" WidthRequest="40"
+                                        Command="{Binding BindingContext.DecrementCartItemCommand, Source={x:Reference SaleRoot}}"
+                                        CommandParameter="{Binding .}" />
+                                <Label Grid.Column="2" Text="{Binding Quantity}"
+                                       VerticalOptions="Center"
+                                       HorizontalTextAlignment="Center"
+                                       MinimumWidthRequest="26" />
+                                <Button Grid.Column="3" Text="+" WidthRequest="40"
+                                        Command="{Binding BindingContext.IncrementCartItemCommand, Source={x:Reference SaleRoot}}"
+                                        CommandParameter="{Binding .}">
+                                    <Button.Triggers>
+                                        <Trigger TargetType="Button" Property="IsEnabled" Value="False">
+                                            <Setter Property="Opacity" Value="0.35" />
+                                        </Trigger>
+                                    </Button.Triggers>
+                                </Button>
+                                <Label Grid.Column="4"
+                                       Text="{Binding Price, StringFormat='{0:N2}'}"
+                                       VerticalOptions="Center" />
+                                <Label Grid.Column="5"
+                                       Text="{Binding TotalAmount, StringFormat='{0:N2}'}"
+                                       VerticalOptions="Center" />
+                                <Button Grid.Column="6" Text="✕" TextColor="Red"
+                                        Command="{Binding BindingContext.RemoveCartItemCommand, Source={x:Reference SaleRoot}}"
+                                        CommandParameter="{Binding .}" />
+                            </Grid>
+                        </DataTemplate>
+                    </CollectionView.ItemTemplate>
+                </CollectionView>
+            </Border>
+
+            <HorizontalStackLayout Grid.Row="3" Spacing="8">
+                <Label Text="Итого:" 
+                       FontAttributes="Bold" 
+                       VerticalOptions="Center"/>
+                <Label Text="{Binding TotalAmount, StringFormat='{0:N2}'}"
+                       FontAttributes="Bold" 
+                       FontSize="20"/>
+            </HorizontalStackLayout>
+
+            <!-- Сумма, полученная от покупателя: только для наличных -->
+            <Label Grid.Row="4"
+                   Text="Оплачено"
+                   IsVisible="{Binding IsCashPayment}" />
+
+            <VerticalStackLayout Grid.Row="5"
+                                 Spacing="5"
+                                 IsVisible="{Binding IsCashPayment}">
+                <Entry Keyboard="Numeric"
+                       Placeholder="Сумма, полученная от покупателя"
+                       Text="{Binding PaidAmountText, Mode=TwoWay}" />
+                <Label Text="{Binding PaymentError}"
+                       IsVisible="{Binding HasPaymentError}"
+                       TextColor="#E58B8B"
+                       FontSize="12"
+                       LineBreakMode="WordWrap" />
+            </VerticalStackLayout>
+
+            <HorizontalStackLayout Grid.Row="6"
+                                   Spacing="8"
+                                   IsVisible="{Binding IsCashPayment}">
+                <Label Text="Сдача:"
+                       FontAttributes="Bold"
+                       VerticalOptions="Center" />
+                <Label Text="{Binding Change}"
+                       FontSize="20"
+                       TextColor="#89D5A1"
+                       FontAttributes="Bold" />
+            </HorizontalStackLayout>
+
+            <Button Grid.Row="7"
+                    Text="Продать"
+                    HeightRequest="46"
+                    VerticalOptions="End"
+                    IsEnabled="{Binding CanCompleteSale}"
+                    Command="{Binding SaleCommand}">
+                <Button.Triggers>
+                    <Trigger TargetType="Button"
+                             Property="IsEnabled"
+                             Value="False">
+                        <Setter Property="Opacity" Value="0.45" />
+                    </Trigger>
+                </Button.Triggers>
+            </Button>
+        </Grid>
+
+        <!-- ПРАВАЯ КОЛОНКА: КАТАЛОГ -->
+        <Grid Grid.Column="1"
+              RowDefinitions="Auto,*,Auto,Auto,Auto,Auto,Auto"
+              RowSpacing="10">
+
+            <Label Grid.Row="0" Text="Каталог товаров"
+                   FontSize="20" FontAttributes="Bold" />
+
+            <Border Grid.Row="1"
+                    Stroke="#888888"
+                    StrokeThickness="1"
+                    StrokeShape="RoundRectangle 10"
+                    Padding="4"
+                    MinimumHeightRequest="100">
+                <Grid>
+                    <CollectionView ItemsSource="{Binding SearchItemModels}"
+                                    SelectionMode="Single"
+                                    SelectedItem="{Binding SelectedSearchItem, Mode=TwoWay}"
+                                    EmptyView="{Binding CatalogEmptyMessage}"
+                                    VerticalOptions="Fill">
+                        <CollectionView.ItemTemplate>
+                            <DataTemplate>
+                                <Grid Padding="10,9"
+                                      ColumnDefinitions="*,Auto"
+                                      ColumnSpacing="12">
+                                    <Grid.GestureRecognizers>
+                                        <TapGestureRecognizer NumberOfTapsRequired="1"
+                                            Command="{Binding BindingContext.SelectProductCommand, Source={x:Reference SaleRoot}}"
+                                            CommandParameter="{Binding .}" />
+                                        <TapGestureRecognizer NumberOfTapsRequired="2"
+                                            Command="{Binding BindingContext.QuickAddProductCommand, Source={x:Reference SaleRoot}}"
+                                            CommandParameter="{Binding .}" />
+                                    </Grid.GestureRecognizers>
+
+                                    <VerticalStackLayout Grid.Column="0" Spacing="2">
+                                        <Label Text="{Binding Name}"
+                                               FontAttributes="Bold"
+                                               LineBreakMode="TailTruncation" />
+                                        <Label Text="{Binding Barcode, StringFormat='Штрихкод: {0}'}"
+                                               FontSize="12" TextColor="Gray" />
+                                    </VerticalStackLayout>
+
+                                    <VerticalStackLayout Grid.Column="1"
+                                                         Spacing="2"
+                                                         HorizontalOptions="End">
+                                        <Label Text="{Binding Price, StringFormat='{0:N2}'}"
+                                               HorizontalTextAlignment="End" />
+                                        <Label Text="{Binding Quantity, StringFormat='На складе: {0}'}"
+                                               FontSize="12" TextColor="Gray"
+                                               HorizontalTextAlignment="End" />
+                                    </VerticalStackLayout>
+                                </Grid>
+                            </DataTemplate>
+                        </CollectionView.ItemTemplate>
+                    </CollectionView>
+
+                    <ActivityIndicator IsVisible="{Binding IsCatalogLoading}"
+                                       IsRunning="{Binding IsCatalogLoading}"
+                                       HorizontalOptions="Center"
+                                       VerticalOptions="Center" />
+                </Grid>
+            </Border>
+
+            <Entry Grid.Row="2"
+                   Placeholder="Поиск по названию или штрихкоду"
+                   Text="{Binding SearchLine, Mode=TwoWay}"
+                   ClearButtonVisibility="WhileEditing" />
+
+            <VerticalStackLayout Grid.Row="3" Spacing="4">
+                <Label Text="{Binding SelectedSearchItem.Name, StringFormat='Выбран: {0}'}"
+                       FontAttributes="Bold" />
+                <Label Text="{Binding AvailableQuantity, StringFormat='Доступно для добавления: {0}'}"
+                       FontSize="12" TextColor="Gray" />
+            </VerticalStackLayout>
+
+            <Grid Grid.Row="4" ColumnDefinitions="*,*" ColumnSpacing="12">
+                <VerticalStackLayout Grid.Column="0" Spacing="4">
+                    <Label Text="Цена" />
+                    <Entry Text="{Binding SelectedPrice, StringFormat='{0:N2}', Mode=OneWay}"
+                           IsReadOnly="True" />
+                </VerticalStackLayout>
+
+                <VerticalStackLayout Grid.Column="1" Spacing="4">
+                    <Label Text="Количество" />
+                    <Entry Text="{Binding RequestedQuantityText, Mode=TwoWay}"
+                           Keyboard="Numeric"
+                           Placeholder="1" />
+                </VerticalStackLayout>
+            </Grid>
+
+            <HorizontalStackLayout Grid.Row="5" Spacing="10">
+                <Label Text="Общая цена:"
+                       FontAttributes="Bold"
+                       VerticalOptions="Center" />
+                <Label Text="{Binding SelectedLineTotal, StringFormat='{0:N2}'}"
+                       FontSize="20"
+                       FontAttributes="Bold" />
+            </HorizontalStackLayout>
+
+            <Button Grid.Row="6"
+                    Text="Добавить в чек"
+                    HeightRequest="46"
+                    VerticalOptions="End"
+                    Command="{Binding AddSelectedToCartCommand}"
+                    IsEnabled="{Binding CanAddToCart}" />
+        </Grid>
+    </Grid>
+</ContentView>

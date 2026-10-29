@@ -1,0 +1,370 @@
+<?xml version="1.0" encoding="utf-8" ?>
+
+<ContentView
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    x:Class="App.Views.CatalogView"
+    x:Name="CatalogRoot"
+    BackgroundColor="#1F1F1F">
+
+    <ContentView.Resources>
+        <ResourceDictionary>
+
+            <!-- Кнопка добавления товара -->
+            <Style x:Key="PrimaryButton"
+                   TargetType="Button">
+                <Setter Property="BackgroundColor"
+                        Value="#AE98EA"/>
+                <Setter Property="TextColor"
+                        Value="#211C30"/>
+                <Setter Property="FontSize"
+                        Value="14"/>
+                <Setter Property="FontAttributes"
+                        Value="Bold"/>
+                <Setter Property="CornerRadius"
+                        Value="10"/>
+                <Setter Property="HeightRequest"
+                        Value="44"/>
+                <Setter Property="Padding"
+                        Value="18,0"/>
+            </Style>
+
+            <!-- Кнопка редактирования -->
+            <Style x:Key="EditButtonStyle"
+                   TargetType="Button">
+                <Setter Property="BackgroundColor"
+                        Value="#34303F"/>
+                <Setter Property="TextColor"
+                        Value="#C5B4F5"/>
+                <Setter Property="FontSize"
+                        Value="13"/>
+                <Setter Property="CornerRadius"
+                        Value="8"/>
+                <Setter Property="HeightRequest"
+                        Value="36"/>
+                <Setter Property="Padding"
+                        Value="14,0"/>
+            </Style>
+
+            <!-- Кнопка удаления -->
+            <Style x:Key="DeleteButtonStyle"
+                   TargetType="Button">
+                <Setter Property="BackgroundColor"
+                        Value="#9F353D"/>
+                <Setter Property="TextColor"
+                        Value="#FFFFFF"/>
+                <Setter Property="FontSize"
+                        Value="18"/>
+                <Setter Property="FontAttributes"
+                        Value="Bold"/>
+                <Setter Property="CornerRadius"
+                        Value="8"/>
+                <Setter Property="HeightRequest"
+                        Value="36"/>
+                <Setter Property="WidthRequest"
+                        Value="40"/>
+                <Setter Property="Padding"
+                        Value="0"/>
+            </Style>
+
+            <!-- Текст ячеек -->
+            <Style x:Key="CellText"
+                   TargetType="Label">
+                <Setter Property="TextColor"
+                        Value="#EAEAEA"/>
+                <Setter Property="FontSize"
+                        Value="13"/>
+                <Setter Property="VerticalOptions"
+                        Value="Center"/>
+                <Setter Property="LineBreakMode"
+                        Value="TailTruncation"/>
+                <Setter Property="MaxLines"
+                        Value="1"/>
+            </Style>
+
+            <!-- Заголовки колонок -->
+            <Style x:Key="HeaderText"
+                   TargetType="Label">
+                <Setter Property="FontSize"
+                        Value="12"/>
+                <Setter Property="FontAttributes"
+                        Value="Bold"/>
+                <Setter Property="TextColor"
+                        Value="#AFAFAF"/>
+                <Setter Property="VerticalOptions"
+                        Value="Center"/>
+            </Style>
+
+        </ResourceDictionary>
+    </ContentView.Resources>
+
+    <Grid Padding="24"
+          RowDefinitions="Auto,Auto,*"
+          RowSpacing="20">
+
+        <!-- ЗАГОЛОВОК И КНОПКА -->
+        <Grid Grid.Row="0"
+              ColumnDefinitions="*,Auto"
+              ColumnSpacing="16">
+
+            <VerticalStackLayout
+                Grid.Column="0"
+                Spacing="5"
+                VerticalOptions="Center">
+
+                <Label
+                    Text="Каталог товаров"
+                    FontSize="26"
+                    FontAttributes="Bold"
+                    TextColor="#FFFFFF"/>
+
+                <Label
+                    Text="Управление ассортиментом"
+                    FontSize="13"
+                    TextColor="#929292"/>
+
+            </VerticalStackLayout>
+
+            <Button
+                Grid.Column="1"
+                x:Name="AddProductButton"
+                Text="+  Добавить товар"
+                Command="{Binding AddItemCommand}"
+                Style="{StaticResource PrimaryButton}"
+                VerticalOptions="Center"/>
+
+        </Grid>
+
+        <!-- ЗАГОЛОВКИ ТАБЛИЦЫ -->
+        <Border
+            Grid.Row="1"
+            BackgroundColor="#2C2C2C"
+            Stroke="#404040"
+            StrokeThickness="1"
+            StrokeShape="RoundRectangle 10"
+            Padding="16,14">
+
+            <Grid
+                ColumnDefinitions="2.2*,1*,1.6*,2.4*,180"
+                ColumnSpacing="16">
+
+                <Label
+                    Grid.Column="0"
+                    Text="НАЗВАНИЕ"
+                    Style="{StaticResource HeaderText}"/>
+
+                <Label
+                    Grid.Column="1"
+                    Text="ЦЕНА"
+                    Style="{StaticResource HeaderText}"/>
+
+                <Label
+                    Grid.Column="2"
+                    Text="ШТРИХКОД"
+                    Style="{StaticResource HeaderText}"/>
+
+                <Label
+                    Grid.Column="3"
+                    Text="ОПИСАНИЕ"
+                    Style="{StaticResource HeaderText}"/>
+
+                <Label
+                    Grid.Column="4"
+                    Text="ДЕЙСТВИЯ"
+                    Style="{StaticResource HeaderText}"
+                    HorizontalTextAlignment="Center"/>
+
+            </Grid>
+
+        </Border>
+
+        <!-- ТАБЛИЦА ТОВАРОВ -->
+        <Border
+            Grid.Row="2"
+            BackgroundColor="#242424"
+            Stroke="#3B3B3B"
+            StrokeThickness="1"
+            StrokeShape="RoundRectangle 10"
+            Padding="0">
+
+            <CollectionView
+                ItemsSource="{Binding CatalogItems}"
+                SelectionMode="None"
+                VerticalOptions="Fill">
+
+                <CollectionView.EmptyView>
+                    <VerticalStackLayout
+                        Padding="30"
+                        Spacing="8"
+                        HorizontalOptions="Center"
+                        VerticalOptions="Center">
+
+                        <Label
+                            Text="Товары не найдены"
+                            FontSize="17"
+                            FontAttributes="Bold"
+                            TextColor="#DDDDDD"
+                            HorizontalTextAlignment="Center"/>
+
+                        <Label
+                            Text="Добавьте первый товар в каталог"
+                            FontSize="13"
+                            TextColor="#888888"
+                            HorizontalTextAlignment="Center"/>
+
+                    </VerticalStackLayout>
+                </CollectionView.EmptyView>
+
+                <CollectionView.ItemTemplate>
+                    <DataTemplate>
+
+                        <VerticalStackLayout Spacing="0">
+
+                            <!-- СТРОКА ТОВАРА -->
+                            <Grid
+                                Padding="16,12"
+                                ColumnDefinitions="2.2*,1*,1.6*,2.4*,180"
+                                ColumnSpacing="16"
+                                MinimumHeightRequest="62">
+
+                                <!-- Название -->
+                                <Label
+                                    Grid.Column="0"
+                                    Text="{Binding Name}"
+                                    Style="{StaticResource CellText}"
+                                    FontAttributes="Bold"/>
+
+                                <!-- Цена -->
+                                <Label
+                                    Grid.Column="1"
+                                    Text="{Binding Price, StringFormat='{0:N2} ₽'}"
+                                    Style="{StaticResource CellText}"/>
+
+                                <!-- Штрихкод -->
+                                <Grid
+                                    Grid.Column="2"
+                                    ColumnDefinitions="100,38,38"
+                                    ColumnSpacing="8"
+                                    VerticalOptions="Center">
+                                    <!-- Штрихкод -->
+                                    <Label
+                                        Grid.Column="0"
+                                        Text="{Binding Barcode}"
+                                        Style="{StaticResource CellText}"
+                                        TextColor="#B7B7B7"/>
+                                    <!-- Показать штрихкод -->
+                                    <Border
+                                        Grid.Column="1"
+                                        WidthRequest="38"
+                                        HeightRequest="38"
+                                        BackgroundColor="#373044"
+                                        Stroke="#695584"
+                                        StrokeThickness="1"
+                                        StrokeShape="RoundRectangle 9"
+                                        ToolTipProperties.Text="Показать штрихкод">
+
+                                        <Border.GestureRecognizers>
+                                            <TapGestureRecognizer
+                                                Command="{Binding BindingContext.ShowBarcodeCommand,
+                                                                  Source={x:Reference CatalogRoot}}"
+                                                CommandParameter="{Binding .}" />
+                                        </Border.GestureRecognizers>
+
+                                        <Path
+                                            Data="M3,4 V20 M6,4 V20 M10,4 V20 M12,4 V20 M16,4 V20 M20,4 V20"
+                                            Stroke="#CDB7F7"
+                                            StrokeThickness="1.8"
+                                            WidthRequest="24"
+                                            HeightRequest="24"
+                                            Aspect="Uniform"
+                                            HorizontalOptions="Center"
+                                            VerticalOptions="Center"
+                                            InputTransparent="True" />
+
+                                    </Border>
+                                    <!-- Скачать штрихкод-->
+                                    <Border
+                                        Grid.Column="2"
+                                        WidthRequest="38"
+                                        HeightRequest="38"
+                                        BackgroundColor="#29382F"
+                                        Stroke="#42674F"
+                                        StrokeThickness="1"
+                                        StrokeShape="RoundRectangle 9"
+                                        ToolTipProperties.Text="Скачать штрихкод PNG">
+
+                                        <Border.GestureRecognizers>
+                                            <TapGestureRecognizer
+                                                Command="{Binding BindingContext.SaveBarcodeImageCommand,
+                                                                  Source={x:Reference CatalogRoot}}"
+                                                CommandParameter="{Binding .}" />
+                                        </Border.GestureRecognizers>
+
+                                        <Path
+                                            Data="M12,4 V15 M7,11 L12,16 L17,11 M5,20 H19"
+                                            Stroke="#8ED7A3"
+                                            StrokeThickness="2"
+                                            StrokeLineCap="Round"
+                                            StrokeLineJoin="Round"
+                                            WidthRequest="24"
+                                            HeightRequest="24"
+                                            Aspect="Uniform"
+                                            HorizontalOptions="Center"
+                                            VerticalOptions="Center"
+                                            InputTransparent="True" />
+
+                                    </Border>
+                                </Grid>
+
+                                <!-- Описание -->
+                                <Label
+                                    Grid.Column="3"
+                                    Text="{Binding Description}"
+                                    Style="{StaticResource CellText}"
+                                    TextColor="#AFAFAF"/>
+
+                                <!-- КНОПКИ ДЕЙСТВИЙ -->
+                                <Grid
+                                    Grid.Column="4"
+                                    ColumnDefinitions="*,50"
+                                    ColumnSpacing="8"
+                                    VerticalOptions="Center">
+
+                                    <!-- Редактировать -->
+                                    <Button
+                                        Grid.Column="0"
+                                        Text="Изменить"
+                                        Style="{StaticResource EditButtonStyle}"
+                                        Command="{Binding BindingContext.EditItemCommand, Source={x:Reference CatalogRoot}}"
+                                        CommandParameter="{Binding .}"/>
+
+                                    <!-- Удалить -->
+                                    <Button
+                                        Grid.Column="1"
+                                        Text="✕"
+                                        Style="{StaticResource DeleteButtonStyle}"
+                                        Command="{Binding BindingContext.DeleteItemCommand, Source={x:Reference CatalogRoot}}"
+                                        CommandParameter="{Binding .}"/>
+
+                                </Grid>
+
+                            </Grid>
+
+                            <!-- РАЗДЕЛИТЕЛЬ СТРОК -->
+                            <BoxView
+                                HeightRequest="1"
+                                BackgroundColor="#383838"
+                                Margin="16,0"/>
+
+                        </VerticalStackLayout>
+
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+
+            </CollectionView>
+
+        </Border>
+
+    </Grid>
+
+</ContentView>

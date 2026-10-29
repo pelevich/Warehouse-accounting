@@ -10,6 +10,6 @@
         public Product Product { get; set; }
 
         public int Quantity { get; set; }
-        public double TotalAmount => Product?.Price * Quantity ?? 0;
+        public decimal TotalAmount => Product?.Price * Quantity ?? 0;
     }
 }

@@ -1,63 +1,184 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             x:Class="App.Views.WarehousePage">
+             x:Class="App.Views.WarehousePage"
+             BackgroundColor="#1F1F1F">
 
-    <Grid ColumnDefinitions="200, *">
-        <!-- ЛЕВОЕ МЕНЮ (статичное) -->
-        <Border Grid.Column="0"
-            BackgroundColor="#2C3E50"
-            StrokeThickness="0">
-            <VerticalStackLayout Padding="10" Spacing="10">
-                
-                <Label Text="Складской учет"
-                   TextColor="White"
-                   FontSize="20"
-                   FontAttributes="Bold"
-                   HorizontalOptions="Center"
-                   Margin="0,20,0,30" />
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <Style x:Key="WarehouseTabText" TargetType="Label">
+                <Setter Property="FontSize" Value="14" />
+                <Setter Property="TextColor" Value="#B0B0B0" />
+                <Setter Property="VerticalTextAlignment" Value="Center" />
+                <Setter Property="InputTransparent" Value="True" />
+            </Style>
+            <Style x:Key="WarehouseTabIcon" TargetType="Label">
+                <Setter Property="FontSize" Value="17" />
+                <Setter Property="TextColor" Value="#999999" />
+                <Setter Property="HorizontalTextAlignment" Value="Center" />
+                <Setter Property="VerticalTextAlignment" Value="Center" />
+                <Setter Property="WidthRequest" Value="22" />
+                <Setter Property="InputTransparent" Value="True" />
+            </Style>
+            <Style x:Key="WarehouseTabBorder" TargetType="Border">
+                <Setter Property="BackgroundColor" Value="#292929" />
+                <Setter Property="Stroke" Value="#383838" />
+                <Setter Property="StrokeThickness" Value="1" />
+                <Setter Property="StrokeShape" Value="RoundRectangle 10" />
+                <Setter Property="Padding" Value="15,10" />
+            </Style>
+            <Style x:Key="CatalogSelectedBorder" TargetType="Border" BasedOn="{StaticResource WarehouseTabBorder}">
+                <Style.Triggers>
+                    <DataTrigger TargetType="Border" Binding="{Binding IsCatalogSelected}" Value="True">
+                        <Setter Property="BackgroundColor" Value="#393348" />
+                        <Setter Property="Stroke" Value="#806DAF" />
+                    </DataTrigger>
+                </Style.Triggers>
+            </Style>
+            <Style x:Key="CatalogSelectedIcon" TargetType="Label" BasedOn="{StaticResource WarehouseTabIcon}">
+                <Style.Triggers>
+                    <DataTrigger TargetType="Label" Binding="{Binding IsCatalogSelected}" Value="True">
+                        <Setter Property="TextColor" Value="#D4C3FF" />
+                    </DataTrigger>
+                </Style.Triggers>
+            </Style>
+            <Style x:Key="CatalogSelectedText" TargetType="Label" BasedOn="{StaticResource WarehouseTabText}">
+                <Style.Triggers>
+                    <DataTrigger TargetType="Label" Binding="{Binding IsCatalogSelected}" Value="True">
+                        <Setter Property="TextColor" Value="#E0D3FF" />
+                        <Setter Property="FontAttributes" Value="Bold" />
+                    </DataTrigger>
+                </Style.Triggers>
+            </Style>
+            <Style x:Key="StockSelectedBorder" TargetType="Border" BasedOn="{StaticResource WarehouseTabBorder}">
+                <Style.Triggers>
+                    <DataTrigger TargetType="Border" Binding="{Binding IsStockSelected}" Value="True">
+                        <Setter Property="BackgroundColor" Value="#393348" />
+                        <Setter Property="Stroke" Value="#806DAF" />
+                    </DataTrigger>
+                </Style.Triggers>
+            </Style>
+            <Style x:Key="StockSelectedIcon" TargetType="Label" BasedOn="{StaticResource WarehouseTabIcon}">
+                <Style.Triggers>
+                    <DataTrigger TargetType="Label" Binding="{Binding IsStockSelected}" Value="True">
+                        <Setter Property="TextColor" Value="#D4C3FF" />
+                    </DataTrigger>
+                </Style.Triggers>
+            </Style>
+            <Style x:Key="StockSelectedText" TargetType="Label" BasedOn="{StaticResource WarehouseTabText}">
+                <Style.Triggers>
+                    <DataTrigger TargetType="Label" Binding="{Binding IsStockSelected}" Value="True">
+                        <Setter Property="TextColor" Value="#E0D3FF" />
+                        <Setter Property="FontAttributes" Value="Bold" />
+                    </DataTrigger>
+                </Style.Triggers>
+            </Style>
+            <Style x:Key="ReceiptSelectedBorder" TargetType="Border" BasedOn="{StaticResource WarehouseTabBorder}">
+                <Style.Triggers>
+                    <DataTrigger TargetType="Border" Binding="{Binding IsReceiptSelected}" Value="True">
+                        <Setter Property="BackgroundColor" Value="#393348" />
+                        <Setter Property="Stroke" Value="#806DAF" />
+                    </DataTrigger>
+                </Style.Triggers>
+            </Style>
+            <Style x:Key="ReceiptSelectedIcon" TargetType="Label" BasedOn="{StaticResource WarehouseTabIcon}">
+                <Style.Triggers>
+                    <DataTrigger TargetType="Label" Binding="{Binding IsReceiptSelected}" Value="True">
+                        <Setter Property="TextColor" Value="#D4C3FF" />
+                    </DataTrigger>
+                </Style.Triggers>
+            </Style>
+            <Style x:Key="ReceiptSelectedText" TargetType="Label" BasedOn="{StaticResource WarehouseTabText}">
+                <Style.Triggers>
+                    <DataTrigger TargetType="Label" Binding="{Binding IsReceiptSelected}" Value="True">
+                        <Setter Property="TextColor" Value="#E0D3FF" />
+                        <Setter Property="FontAttributes" Value="Bold" />
+                    </DataTrigger>
+                </Style.Triggers>
+            </Style>
+            <!-- Выделение вкладки истории прихода -->
+            <Style x:Key="ReceiptHistorySelectedBorder" TargetType="Border" BasedOn="{StaticResource WarehouseTabBorder}">
+                <Style.Triggers>
+                    <DataTrigger TargetType="Border" Binding="{Binding IsReceiptHistorySelected}" Value="True">
+                        <Setter Property="BackgroundColor" Value="#393348" />
+                        <Setter Property="Stroke" Value="#806DAF" />
+                    </DataTrigger>
+                </Style.Triggers>
+            </Style>
+            <Style x:Key="ReceiptHistorySelectedText" TargetType="Label" BasedOn="{StaticResource WarehouseTabText}">
+                <Style.Triggers>
+                    <DataTrigger TargetType="Label" Binding="{Binding IsReceiptHistorySelected}" Value="True">
+                        <Setter Property="TextColor" Value="#E0D3FF" />
+                        <Setter Property="FontAttributes" Value="Bold" />
+                    </DataTrigger>
+                </Style.Triggers>
+            </Style>
+        </ResourceDictionary>
+    </ContentPage.Resources>
 
-                <Button x:Name="InventoryButton"
-                    Text="📦 Склад"
-                    BackgroundColor="#34495E"
-                    TextColor="White"
-                    FontSize="16"
-                    HeightRequest="50"
-                    HorizontalOptions="Fill"
-                    CornerRadius="8" />
-
-                <Button x:Name="SaleButton"
-                    Text="💰 Продажа"
-                    BackgroundColor="#34495E"
-                    TextColor="White"
-                    FontSize="16"
-                    HeightRequest="50"
-                    HorizontalOptions="Fill"
-                    CornerRadius="8" />
-
-            </VerticalStackLayout>
+    <Grid ColumnDefinitions="200,*">
+        <!-- Существующее боковое меню -->
+        <Border Grid.Column="0" BackgroundColor="#2C3E50" StrokeThickness="0">
+            <Grid Padding="8" RowDefinitions="Auto,*,Auto">
+                <VerticalStackLayout Grid.Row="0" Spacing="10">
+                    <Label Text="Складской учет" TextColor="White" FontSize="20"
+                           FontAttributes="Bold" HorizontalOptions="Center" Margin="0,20,0,30" />
+                    <Button Text="📦 Склад" BackgroundColor="#493E59" TextColor="#E3D4FF" FontAttributes="Bold" FontSize="16" HeightRequest="50" CornerRadius="8" HorizontalOptions="Fill" />
+                    <Button Text="💰 Продажа" Command="{Binding SalePageCommand}" BackgroundColor="#34495E" TextColor="White" FontSize="16" HeightRequest="50" CornerRadius="8" HorizontalOptions="Fill" />
+                    <Button Text="👥 Сотрудники" Command="{Binding ShowEmployeesCommand}" IsVisible="{Binding Session.IsAdmin}" BackgroundColor="#34495E" TextColor="White" FontSize="16" HeightRequest="50" CornerRadius="8" HorizontalOptions="Fill" />
+                    <Button Text="◷  История" Command="{Binding HistoryPageCommand}" BackgroundColor="#34495E" TextColor="White" FontSize="16" HeightRequest="50" CornerRadius="8" HorizontalOptions="Fill" />
+                </VerticalStackLayout>
+                <Button Grid.Row="2" Text="Закрыть смену" Command="{Binding ManageShiftCommand}"
+                        BackgroundColor="#34495E" TextColor="White"
+                        FontSize="16" HeightRequest="50" CornerRadius="8" Margin="0,0,0,10" />
+            </Grid>
         </Border>
-        <Grid Grid.Column="1" RowDefinitions="Auto, *">
-            
-            <!-- Меню Склада -->
-            <HorizontalStackLayout Grid.Row="0">
-                <Button x:Name="CatalogButton"
-                        Command="{Binding ShowCatalogCommand}"
-                        Text="Каталог"/>
 
-                <Button x:Name="StockButton"
-                        Command="{Binding ShowStockCommand}"
-                        Text="Остаток"/>
+        <Grid Grid.Column="1" RowDefinitions="Auto,*" RowSpacing="0">
+            <!-- Навигация по складу -->
+            <HorizontalStackLayout Grid.Row="0"
+                                   Padding="24,18,24,8"
+                                   Spacing="10">
+                <Border x:Name="CatalogTab"
+                        Style="{StaticResource CatalogSelectedBorder}">
+                    <Border.GestureRecognizers>
+                        <TapGestureRecognizer Command="{Binding ShowCatalogCommand}" />
+                    </Border.GestureRecognizers>
+                    <HorizontalStackLayout Spacing="9" InputTransparent="True">
+                        <Label x:Name="CatalogTabText"
+                               Text="Каталог"
+                               Style="{StaticResource CatalogSelectedText}" />
+                    </HorizontalStackLayout>
+                </Border>
 
-                <Button x:Name="ReceiptButton"
-                        Command="{Binding ShowReceiptCommand}"
-                        Text="Приход"/>
+                <Border x:Name="StockTab"
+                        Style="{StaticResource StockSelectedBorder}">
+                    <Border.GestureRecognizers>
+                        <TapGestureRecognizer Command="{Binding ShowStockCommand}" />
+                    </Border.GestureRecognizers>
+                    <HorizontalStackLayout Spacing="9" InputTransparent="True">
+                        <Label x:Name="StockTabText"
+                               Text="Остаток"
+                               Style="{StaticResource StockSelectedText}" />
+                    </HorizontalStackLayout>
+                </Border>
+
+                <Border x:Name="ReceiptTab"
+                        Style="{StaticResource ReceiptSelectedBorder}">
+                    <Border.GestureRecognizers>
+                        <TapGestureRecognizer Command="{Binding ShowReceiptCommand}" />
+                    </Border.GestureRecognizers>
+                    <HorizontalStackLayout Spacing="9" InputTransparent="True">
+                        <Label x:Name="ReceiptTabText"
+                               Text="Приход"
+                               Style="{StaticResource ReceiptSelectedText}" />
+                    </HorizontalStackLayout>
+                </Border>
             </HorizontalStackLayout>
 
-            <!-- ОБЛАСТЬ КОНТЕНТА -->
+            <!-- Область содержимого не меняется -->
             <ContentView Grid.Row="1"
-                        Content="{Binding CurrentView}">
-            </ContentView>
+                         Content="{Binding CurrentView}" />
         </Grid>
     </Grid>
 </ContentPage>

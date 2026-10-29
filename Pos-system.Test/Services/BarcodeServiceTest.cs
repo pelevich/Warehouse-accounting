@@ -12,7 +12,7 @@ namespace Pos_system.Test.Services
 
         public BarcodeServiceTest()
         {
-            _productRepositoryMock = new Mock<IProductRepository>();
+            _productRepositoryMock = new Mock<IUnitOfWork>();
         }
 
         [Fact]
@@ -28,7 +28,7 @@ namespace Pos_system.Test.Services
             };
 
             _productRepositoryMock
-                .Setup(repo => repo.GetAllAsync(It.IsAny<CancellationToken>()))
+                .Setup(repo => repo.ProductRepository.GetAllAsync(It.IsAny<CancellationToken>()))
                 .ReturnsAsync(products);
 
             var result = await serviceBarcode.GenerateBarcodeNumber();
@@ -86,9 +86,8 @@ namespace Pos_system.Test.Services
             var serviceBarcode = new BarcodeService(_productRepositoryMock.Object);
             string code = "4607176800080";
 
-            var result = await serviceBarcode.GenerateBarcodeCodeImg(code);
+            var result = serviceBarcode.GenerateBarcodeCodeImg(code);
 
-            
         }
     }
 }

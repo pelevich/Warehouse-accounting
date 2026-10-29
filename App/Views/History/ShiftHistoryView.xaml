@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:App.ViewModels.Tabs"
+             x:DataType="vm:ShiftHistoryViewModel"
+             x:Class="App.Views.ShiftHistoryView"
+             BackgroundColor="#1F1F1F">
+    <Grid Padding="24,18,24,22" RowDefinitions="Auto,Auto,Auto,*" RowSpacing="15">
+        <Grid Grid.Row="0" ColumnDefinitions="*,Auto">
+            <VerticalStackLayout Spacing="5">
+                <Label Text="История смен" TextColor="#F7F7F8" FontSize="25" FontAttributes="Bold"/>
+                <Label Text="Сотрудники, время работы, продажи и поступления" TextColor="#9999A3" FontSize="13"/>
+            </VerticalStackLayout>
+            <Button Grid.Column="1" Text="↻  Обновить" Command="{Binding LoadCommand}" BackgroundColor="#34313C"
+              TextColor="#D4C3FF" CornerRadius="10" Padding="20,0" HeightRequest="42"/>
+        </Grid>
+        <Border Grid.Row="1" BackgroundColor="#292929" Stroke="#3B3B3B" StrokeShape="RoundRectangle 14" Padding="18,14">
+            <Grid ColumnDefinitions="*,*,Auto" RowDefinitions="Auto,Auto" ColumnSpacing="13">
+                <VerticalStackLayout Grid.Column="0" Spacing="6">
+                    <Label Text="Сотрудник" TextColor="#AFAFB9" FontSize="12"/>
+                    <Picker ItemsSource="{Binding Employees}" SelectedItem="{Binding SelectedEmployee, Mode=TwoWay}" ItemDisplayBinding="{Binding Name}"
+                  BackgroundColor="#353535" TextColor="White"/>
+                </VerticalStackLayout>
+                <VerticalStackLayout Grid.Column="1" Spacing="6">
+                    <Label Text="Сортировка" TextColor="#AFAFB9" FontSize="12"/>
+                    <Picker ItemsSource="{Binding SortOptions}" SelectedItem="{Binding SelectedSort, Mode=TwoWay}" BackgroundColor="#353535" TextColor="White">
+
+                    </Picker>
+                </VerticalStackLayout>
+                <Button Grid.Column="2" Text="Сбросить" Command="{Binding ResetFiltersCommand}" VerticalOptions="End"
+                BackgroundColor="#38333F" TextColor="#CFC0F1" CornerRadius="10" Padding="16,0" HeightRequest="48"/>
+                <HorizontalStackLayout Grid.Row="1" Grid.ColumnSpan="3" Spacing="12" Margin="0,12,0,0">
+                    <CheckBox IsChecked="{Binding UseDateFilter, Mode=TwoWay}" Color="#AE98EA"/>
+                    <Label Text="Период" TextColor="#E7E7EC" VerticalOptions="Center"/>
+                    <DatePicker Date="{Binding DateFrom, Mode=TwoWay}" Format="dd.MM.yyyy" IsVisible="{Binding UseDateFilter}"
+                      BackgroundColor="#353535" TextColor="White"/>
+                    <DatePicker Date="{Binding DateTo, Mode=TwoWay}" Format="dd.MM.yyyy" IsVisible="{Binding UseDateFilter}"
+                      BackgroundColor="#353535" TextColor="White"/>
+                </HorizontalStackLayout>
+            </Grid>
+        </Border>
+        <Grid Grid.Row="2" ColumnDefinitions="*,Auto">
+            <Label Text="ИСТОРИЯ СМЕН" TextColor="#9B9BA6" FontAttributes="Bold" FontSize="12"/>
+            <Label Text="{Binding VisibleCount, StringFormat='Записей: {0}'}" Grid.Column="1" TextColor="#9B9BA6" FontSize="12"/>
+        </Grid>
+        <CollectionView ItemsSource="{Binding Records}" Grid.Row="3" SelectionMode="None" VerticalScrollBarVisibility="Always">
+            <CollectionView.ItemTemplate>
+                <DataTemplate x:DataType="vm:ShiftHistoryRow">
+                    <Border BackgroundColor="#272727" Stroke="#3D3D3D" StrokeShape="RoundRectangle 12" Margin="0,0,0,10">
+                        <VerticalStackLayout Spacing="0">
+                            <Grid Padding="20,15" ColumnDefinitions="*,Auto">
+                                <Grid.GestureRecognizers>
+                                    <TapGestureRecognizer Command="{Binding ToggleCommand}"/>
+                                </Grid.GestureRecognizers>
+                                <VerticalStackLayout Spacing="5">
+                                    <Label Text="{Binding DateText}" TextColor="#F4F4F6" FontSize="15" FontAttributes="Bold"/>
+                                    <Label Text="{Binding EmployeeName}" TextColor="#B7B7C1" FontSize="13"/>
+                                    <Label Text="{Binding Summary}" TextColor="#B8A3EE" FontSize="13"/>
+                                </VerticalStackLayout>
+                                <Border Grid.Column="1" BackgroundColor="#36313D" Stroke="#65557A" StrokeShape="RoundRectangle 20"
+                        WidthRequest="36" HeightRequest="36" VerticalOptions="Center">
+                                    <Label Text="{Binding Arrow}" TextColor="#D4C3FF" FontSize="18"
+                         VerticalOptions="Center" HorizontalOptions="Center" InputTransparent="True"/>
+                                </Border>
+                            </Grid>
+                            <VerticalStackLayout IsVisible="{Binding IsExpanded}" Padding="20,0,20,18" Spacing="9">
+                                <BoxView Color="#414141" HeightRequest="1"/>
+                                <Label Text="{Binding OpenText}" TextColor="#D7D7DF"/>
+                                <Label Text="{Binding CloseText}" TextColor="#D7D7DF"/>
+                                <Label Text="{Binding Details}" TextColor="#D4C3FF"/>
+                            </VerticalStackLayout>
+                        </VerticalStackLayout>
+                    </Border>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+        <ActivityIndicator Grid.Row="3" IsRunning="{Binding IsBusy}" IsVisible="{Binding IsBusy}" Color="#B8A3EE" VerticalOptions="Center" HorizontalOptions="Center"/>
+        <Label Grid.Row="3" Text="Записей не найдено" IsVisible="{Binding IsEmpty}" TextColor="#9999A3" HorizontalOptions="Center" VerticalOptions="Center"/>
+    </Grid>
+</ContentView>

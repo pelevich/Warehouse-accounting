@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="App.Views.StockView"
+             BackgroundColor="#1F1F1F">
+    <ContentView.Resources>
+        <ResourceDictionary>
+            <Style x:Key="StockHeader" TargetType="Label">
+                <Setter Property="FontSize" Value="12"/>
+                <Setter Property="FontAttributes" Value="Bold"/>
+                <Setter Property="TextColor" Value="#AFAFAF"/>
+                <Setter Property="VerticalOptions" Value="Center"/>
+            </Style>
+            <Style x:Key="StockCell" TargetType="Label">
+                <Setter Property="FontSize" Value="13"/>
+                <Setter Property="TextColor" Value="#EAEAEA"/>
+                <Setter Property="VerticalOptions" Value="Center"/>
+                <Setter Property="LineBreakMode" Value="TailTruncation"/>
+                <Setter Property="MaxLines" Value="1"/>
+            </Style>
+            <Style x:Key="StockDelete" TargetType="Button">
+                <Setter Property="BackgroundColor" Value="#9F353D"/>
+                <Setter Property="TextColor" Value="White"/>
+                <Setter Property="FontSize" Value="18"/>
+                <Setter Property="FontAttributes" Value="Bold"/>
+                <Setter Property="CornerRadius" Value="8"/>
+                <Setter Property="HeightRequest" Value="36"/>
+                <Setter Property="WidthRequest" Value="40"/>
+                <Setter Property="Padding" Value="0"/>
+            </Style>
+        </ResourceDictionary>
+    </ContentView.Resources>
+
+    <Grid Padding="24" RowDefinitions="Auto,Auto,*" RowSpacing="20">
+        <Grid Grid.Row="0" ColumnDefinitions="*,Auto">
+            <VerticalStackLayout Spacing="5">
+                <Label Text="Складские остатки" FontSize="26"
+                       FontAttributes="Bold" TextColor="White"/>
+                <Label Text="Наличие товаров и стоимость остатков"
+                       FontSize="13" TextColor="#929292"/>
+            </VerticalStackLayout>
+            <ActivityIndicator Grid.Column="1"
+                               IsRunning="{Binding IsLoading}"
+                               IsVisible="{Binding IsLoading}"
+                               Color="#AE98EA"
+                               VerticalOptions="Center"/>
+        </Grid>
+
+        <Border Grid.Row="1" BackgroundColor="#2C2C2C"
+                Stroke="#404040" StrokeThickness="1"
+                StrokeShape="RoundRectangle 10" Padding="16,14">
+            <Grid ColumnDefinitions="2.2*,1.6*,1*,1*,1.4*"
+                  ColumnSpacing="16">
+                <Label Grid.Column="0" Text="НАЗВАНИЕ"
+                       Style="{StaticResource StockHeader}"/>
+                <Label Grid.Column="1" Text="ШТРИХКОД"
+                       Style="{StaticResource StockHeader}"/>
+                <Label Grid.Column="2" Text="ОСТАТОК"
+                       Style="{StaticResource StockHeader}"/>
+                <Label Grid.Column="3" Text="ЦЕНА"
+                       Style="{StaticResource StockHeader}"/>
+                <Label Grid.Column="4" Text="СУММА"
+                       Style="{StaticResource StockHeader}"/>
+                <Label Grid.Column="5" Text=" "
+                       Style="{StaticResource StockHeader}"/>
+            </Grid>
+        </Border>
+
+        <Border Grid.Row="2" BackgroundColor="#242424"
+                Stroke="#3B3B3B" StrokeThickness="1"
+                StrokeShape="RoundRectangle 10" Padding="0">
+            <CollectionView ItemsSource="{Binding InventoryItems}"
+                            SelectionMode="None"
+                            VerticalOptions="Fill">
+                <CollectionView.EmptyView>
+                    <VerticalStackLayout Padding="30" Spacing="8"
+                                         HorizontalOptions="Center"
+                                         VerticalOptions="Center">
+                        <Label Text="На складе пока нет товаров"
+                               FontSize="17" FontAttributes="Bold"
+                               TextColor="#DDDDDD"
+                               HorizontalTextAlignment="Center"/>
+                        <Label Text="Поступления появятся здесь"
+                               FontSize="13" TextColor="#888888"
+                               HorizontalTextAlignment="Center"/>
+                    </VerticalStackLayout>
+                </CollectionView.EmptyView>
+                <CollectionView.ItemTemplate>
+                    <DataTemplate>
+                        <VerticalStackLayout Spacing="0">
+                            <Grid Padding="16,12"
+                                  ColumnDefinitions="2.2*,1.6*,1*,1*,1.4*"
+                                  ColumnSpacing="16"
+                                  MinimumHeightRequest="62">
+                                <Label Grid.Column="0" Text="{Binding Name}"
+                                       FontAttributes="Bold"
+                                       Style="{StaticResource StockCell}"/>
+                                <Label Grid.Column="1" Text="{Binding Barcode}"
+                                       TextColor="#B7B7B7"
+                                       Style="{StaticResource StockCell}"/>
+                                <Label Grid.Column="2" Text="{Binding Quantity}"
+                                       Style="{StaticResource StockCell}"/>
+                                <Label Grid.Column="3"
+                                       Text="{Binding Price, StringFormat='{0:N2} ₽'}"
+                                       Style="{StaticResource StockCell}"/>
+                                <Label Grid.Column="4"
+                                       Text="{Binding TotalAmount, StringFormat='{0:N2} ₽'}"
+                                       FontAttributes="Bold"
+                                       Style="{StaticResource StockCell}"/>
+                            </Grid>
+                            <BoxView HeightRequest="1"
+                                     BackgroundColor="#383838"
+                                     Margin="16,0"/>
+                        </VerticalStackLayout>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+        </Border>
+    </Grid>
+</ContentView>

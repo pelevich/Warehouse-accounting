@@ -2,51 +2,72 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="App.Views.SalePage"
-             Title="SalePage">
-    
+             Title="Продажа"
+             BackgroundColor="#1F1F1F">
+
     <Grid ColumnDefinitions="200, *">
         <!-- ═══════════════ ЛЕВОЕ МЕНЮ (статичное) ═══════════════ -->
-        <Border Grid.Column="0"
-        BackgroundColor="#2C3E50"
-        StrokeThickness="0">
-            <VerticalStackLayout Padding="10" Spacing="10">
-
-                <!-- Заголовок -->
-                <Label Text="Складской учет"
-               TextColor="White"
-               FontSize="20"
-               FontAttributes="Bold"
-               HorizontalOptions="Center"
-               Margin="0,20,0,30" />
-
-                <!-- Кнопка "Склад" -->
-                <Button x:Name="InventoryButton"
-                Text="📦 Склад"
-                BackgroundColor="#34495E"
-                TextColor="White"
-                FontSize="16"
-                HeightRequest="50"
-                HorizontalOptions="Fill"
-                CornerRadius="8" />
-
-                <!-- Кнопка "Продажа" -->
-                <Button x:Name="SaleButton"
-                Text="💰 Продажа"
-                BackgroundColor="#34495E"
-                TextColor="White"
-                FontSize="16"
-                HeightRequest="50"
-                HorizontalOptions="Fill"
-                CornerRadius="8" />
-
-            </VerticalStackLayout>
+        <Border Grid.Column="0" BackgroundColor="#2C3E50" StrokeThickness="0">
+            <Grid Padding="8" RowDefinitions="Auto,*,Auto">
+                <VerticalStackLayout Grid.Row="0" Spacing="10">
+                    <Label Text="Складской учет" TextColor="White" FontSize="20"
+                           FontAttributes="Bold" HorizontalOptions="Center" Margin="0,20,0,30" />
+                    <Button Text="📦 Склад" Command="{Binding WarehousePageCommand}" BackgroundColor="#34495E" TextColor="White" FontSize="16" HeightRequest="50" CornerRadius="8" HorizontalOptions="Fill" />
+                    <Button Text="💰 Продажа" BackgroundColor="#493E59" TextColor="#E3D4FF" FontAttributes="Bold" FontSize="16" HeightRequest="50" CornerRadius="8" HorizontalOptions="Fill" />
+                    <Button Text="👥 Сотрудники" Command="{Binding ShowEmployeesCommand}" IsVisible="{Binding Session.IsAdmin}" BackgroundColor="#34495E" TextColor="White" FontSize="16" HeightRequest="50" CornerRadius="8" HorizontalOptions="Fill" />
+                    <Button Text="◷  История" Command="{Binding HistoryPageCommand}" BackgroundColor="#34495E" TextColor="White" FontSize="16" HeightRequest="50" CornerRadius="8" HorizontalOptions="Fill" />
+                </VerticalStackLayout>
+                <Button Grid.Row="2" Text="Закрыть смену" Command="{Binding ManageShiftCommand}"
+                        BackgroundColor="#34495E" TextColor="White"
+                        FontSize="16" HeightRequest="50" CornerRadius="8" Margin="0,0,0,10" />
+            </Grid>
         </Border>
 
         <!-- ═══════════════ ОБЛАСТЬ КОНТЕНТА ═══════════════ -->
-        <ContentView Grid.Column="1"
-             x:Name="ContentArea">
-            <!-- Сюда будем подставлять нужную страницу -->
-        </ContentView>
+        <Grid Grid.Column="1" RowDefinitions="Auto, *">
+
+            <!-- Вкладки продажи и истории -->
+            <HorizontalStackLayout Grid.Row="0"
+                                   Padding="24,18,24,8"
+                                   Spacing="10">
+                <Border BackgroundColor="#393348"
+                        Stroke="#806DAF"
+                        StrokeThickness="1"
+                        StrokeShape="RoundRectangle 10"
+                        Padding="15,10">
+                    <Border.GestureRecognizers>
+                        <TapGestureRecognizer Command="{Binding ShowSaleCommand}" />
+                    </Border.GestureRecognizers>
+                    <Label Text="Продажа"
+                           TextColor="#E0D3FF"
+                           FontAttributes="Bold"
+                           FontSize="14"
+                           InputTransparent="True">
+                        <Label.Triggers>
+                            <DataTrigger TargetType="Label"
+                                         Binding="{Binding IsSaleSelected}"
+                                         Value="False">
+                                <Setter Property="TextColor" Value="#B0B0B0" />
+                                <Setter Property="FontAttributes" Value="None" />
+                            </DataTrigger>
+                        </Label.Triggers>
+                    </Label>
+                    <Border.Triggers>
+                        <DataTrigger TargetType="Border"
+                                     Binding="{Binding IsSaleSelected}"
+                                     Value="False">
+                            <Setter Property="BackgroundColor" Value="#292929" />
+                            <Setter Property="Stroke" Value="#383838" />
+                        </DataTrigger>
+                    </Border.Triggers>
+                </Border>
+            </HorizontalStackLayout>
+
+            <!-- ОБЛАСТЬ КОНТЕНТА -->
+            <ContentView Grid.Row="1"
+                Content="{Binding CurrentView}">
+            </ContentView>
+        </Grid>
     </Grid>
-    
+
 </ContentPage>

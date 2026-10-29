@@ -3,7 +3,6 @@ using Microsoft.Extensions.Logging;
 using Services.DTOs;
 using Services.Interfaces.repository;
 using Services.Interfaces.service;
-using SkiaSharp;
 
 namespace Services.service
 {
@@ -37,6 +36,25 @@ namespace Services.service
             }
 
             return itemDTOs;
+        }
+
+        public async Task<InventoryItemDto?> GetByProductIdAsync(
+    Guid productId,
+    CancellationToken ct = default)
+        {
+            var item = await _unitOfWork.InventoryItemRepository
+                .GetByProductIdAsync(productId, ct);
+
+            if (item is null)
+                return null;
+
+            return new InventoryItemDto
+            {
+                Id = item.Id,
+                ProductId = item.ProductId,
+                InventoryId = item.InventoryId,
+                Quantity = item.Quantity
+            };
         }
 
         public async Task AddItemAsync(InventoryItemDto item, CancellationToken ct) 
@@ -117,21 +135,30 @@ namespace Services.service
 
                 await _unitOfWork.BeginTransactionAsync(ct);
 
-                var obj = new InventoryItem
-                {
-                    Id = item.Id.Value,
-                    ProductId = item.ProductId.Value,
-                    InventoryId = item.InventoryId.Value,
-                    Quantity = item.Quantity.Value,
-                };
+                //var obj = new InventoryItem
+                //{
+                //    Id = item.Id.Value,
+                //    ProductId = item.ProductId.Value,
+                //    InventoryId = item.InventoryId.Value,
+                //    Quantity = item.Quantity.Value,
+                //};
 
-                await _unitOfWork.InventoryItemRepository.Update(obj, ct);
+                var existing = await _unitOfWork.InventoryItemRepository.GetByIdAsync(item.Id.Value, ct);
+                if (existing is null)
+                    throw new InvalidOperationException($"InventoryItem {item.Id} не найден");
+
+                existing.Quantity = item.Quantity.Value;
+                existing.ProductId = item.ProductId.Value;
+                existing.InventoryId = item.InventoryId.Value;
+
+                await _unitOfWork.InventoryItemRepository.Update(existing, ct);
                 await _unitOfWork.CommitAsync(ct);
             }
-            catch
+            catch (Exception ex)
             {
                 await _unitOfWork.RollbackAsync(ct);
-                throw new Exception("Обновить товар на складе не удалось");
+                _logger.LogError(ex, "Обновить товар на складе не удалось");
+                throw;
             }
         }
     }

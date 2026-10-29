@@ -17,6 +17,44 @@ namespace Infrastructure.Migrations
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "10.0.9");
 
+            modelBuilder.Entity("Domain.Entities.Employee", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("FirstName")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("TEXT");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<bool>("IsAdmin")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("LastName")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Login")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("MiddleName")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("PasswordHash")
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Employees");
+                });
+
             modelBuilder.Entity("Domain.Entities.Inventory", b =>
                 {
                     b.Property<Guid>("Id")
@@ -79,8 +117,8 @@ namespace Infrastructure.Migrations
                         .HasMaxLength(255)
                         .HasColumnType("TEXT");
 
-                    b.Property<double>("Price")
-                        .HasColumnType("REAL");
+                    b.Property<decimal>("Price")
+                        .HasColumnType("TEXT");
 
                     b.HasKey("Id");
 
@@ -113,7 +151,15 @@ namespace Infrastructure.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("TEXT");
 
+                    b.Property<DateTime>("SoldAt")
+                        .HasColumnType("TEXT");
+
+                    b.Property<Guid?>("WorkShiftId")
+                        .HasColumnType("TEXT");
+
                     b.HasKey("Id");
+
+                    b.HasIndex("WorkShiftId");
 
                     b.ToTable("Receipts");
                 });
@@ -156,7 +202,12 @@ namespace Infrastructure.Migrations
                     b.Property<DateTime>("SoldAt")
                         .HasColumnType("TEXT");
 
+                    b.Property<Guid?>("WorkShiftId")
+                        .HasColumnType("TEXT");
+
                     b.HasKey("Id");
+
+                    b.HasIndex("WorkShiftId");
 
                     b.ToTable("Sales");
                 });
@@ -184,6 +235,30 @@ namespace Infrastructure.Migrations
                         .IsUnique();
 
                     b.ToTable("SaleItems");
+                });
+
+            modelBuilder.Entity("Domain.Entities.WorkShift", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime?>("ClosedAt")
+                        .HasColumnType("TEXT");
+
+                    b.Property<Guid>("EmployeeId")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("OpenedAt")
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("EmployeeId");
+
+                    b.HasIndex("OpenedAt");
+
+                    b.ToTable("WorkShifts");
                 });
 
             modelBuilder.Entity("Domain.Entities.InventoryItem", b =>
@@ -215,6 +290,16 @@ namespace Infrastructure.Migrations
                     b.Navigation("Catalog");
                 });
 
+            modelBuilder.Entity("Domain.Entities.Receipt", b =>
+                {
+                    b.HasOne("Domain.Entities.WorkShift", "WorkShift")
+                        .WithMany("Receipts")
+                        .HasForeignKey("WorkShiftId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.Navigation("WorkShift");
+                });
+
             modelBuilder.Entity("Domain.Entities.ReceiptItem", b =>
                 {
                     b.HasOne("Domain.Entities.Product", "Product")
@@ -232,6 +317,16 @@ namespace Infrastructure.Migrations
                     b.Navigation("Product");
 
                     b.Navigation("Receipt");
+                });
+
+            modelBuilder.Entity("Domain.Entities.Sale", b =>
+                {
+                    b.HasOne("Domain.Entities.WorkShift", "WorkShift")
+                        .WithMany("Sales")
+                        .HasForeignKey("WorkShiftId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.Navigation("WorkShift");
                 });
 
             modelBuilder.Entity("Domain.Entities.SaleItem", b =>
@@ -253,6 +348,22 @@ namespace Infrastructure.Migrations
                     b.Navigation("Sale");
                 });
 
+            modelBuilder.Entity("Domain.Entities.WorkShift", b =>
+                {
+                    b.HasOne("Domain.Entities.Employee", "Employee")
+                        .WithMany("WorkShifts")
+                        .HasForeignKey("EmployeeId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Employee");
+                });
+
+            modelBuilder.Entity("Domain.Entities.Employee", b =>
+                {
+                    b.Navigation("WorkShifts");
+                });
+
             modelBuilder.Entity("Domain.Entities.Inventory", b =>
                 {
                     b.Navigation("Items");
@@ -271,6 +382,13 @@ namespace Infrastructure.Migrations
             modelBuilder.Entity("Domain.Entities.Sale", b =>
                 {
                     b.Navigation("Items");
+                });
+
+            modelBuilder.Entity("Domain.Entities.WorkShift", b =>
+                {
+                    b.Navigation("Receipts");
+
+                    b.Navigation("Sales");
                 });
 #pragma warning restore 612, 618
         }

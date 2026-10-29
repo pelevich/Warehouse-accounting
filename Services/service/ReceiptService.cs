@@ -6,11 +6,13 @@ namespace Services.service
 {
     public class ReceiptService : IReceiptService
     {
-        private IUnitOfWork _unitOfWork;
+        private readonly IUnitOfWork _unitOfWork;
+        private readonly ISessionService _session;
 
-        public ReceiptService(IUnitOfWork unitOfWork)
+        public ReceiptService(IUnitOfWork unitOfWork, ISessionService session)
         {
             _unitOfWork = unitOfWork;
+            _session = session;
         }
 
         public async Task AddReceiptAsync(Guid receiptId, CancellationToken ct)
@@ -22,6 +24,7 @@ namespace Services.service
                 var receipt_t = new Receipt
                 {
                     Id = receiptId,
+                    WorkShiftId = _session.CurrentShiftId
                 };
 
                 await _unitOfWork.ReceiptRepository.AddAsync(receipt_t);
@@ -57,47 +60,84 @@ namespace Services.service
             await _unitOfWork.CommitAsync();
         }
 
-        public async Task ConfirmAsync(Guid receiptId, Guid inventoryId, CancellationToken ct)
+        public async Task ConfirmAsync(
+            Guid receiptId,
+            Guid inventoryId,
+            CancellationToken ct)
         {
             await _unitOfWork.BeginTransactionAsync(ct);
+
             try
             {
-                var inventoryItems = await _unitOfWork.InventoryItemRepository.GetAllAsync(ct);
-                var receipt = await _unitOfWork.ReceiptRepository.GetByIdAsync(receiptId, ct);
+                var receipt = await _unitOfWork
+                    .ReceiptRepository
+                    .GetByIdAsync(receiptId, ct)
+                    ?? throw new InvalidOperationException(
+                        "Документ прихода не найден.");
+
+                if (receipt.SoldAt != default)
+                    throw new InvalidOperationException(
+                        "Этот приход уже проведён.");
+
+                if (receipt.Items == null || receipt.Items.Count == 0)
+                    throw new InvalidOperationException(
+                        "Нельзя провести пустой приход.");
+
+                var inventory = await _unitOfWork
+                    .InventoryRepository
+                    .GetByIdAsync(inventoryId, ct)
+                    ?? throw new InvalidOperationException(
+                        "Склад не найден.");
 
                 foreach (var receiptItem in receipt.Items)
                 {
-                    var inventoryItem = inventoryItems.First(i => i.Product == receiptItem.Product);
+                    if (receiptItem.Quantity <= 0)
+                        throw new InvalidOperationException(
+                            "Количество товара должно быть больше нуля.");
+
+                    // Получаем существующий остаток по ProductId.
+                    var inventoryItem = await _unitOfWork
+                        .InventoryItemRepository
+                        .GetByProductIdAsync(
+                            receiptItem.ProductId, ct);
+
                     if (inventoryItem != null)
                     {
-                        inventoryItem.Quantity += receiptItem.Quantity;
-                        await _unitOfWork.InventoryItemRepository.Update(inventoryItem, ct);
+                        // EF Core сохранит изменение автоматически,
+                        // если репозиторий возвращает tracked-сущность.
+                        inventoryItem.Quantity = checked(
+                            inventoryItem.Quantity + receiptItem.Quantity);
                     }
                     else
                     {
-                        var inventoryTemp = await _unitOfWork.InventoryRepository.GetByIdAsync(inventoryId, ct);
-                        var inventoryItemTemp = new InventoryItem
+                        var newItem = new InventoryItem
                         {
                             Id = Guid.NewGuid(),
                             ProductId = receiptItem.ProductId,
-                            Product = receiptItem.Product,
-                            InventoryId = inventoryTemp.Id,
-                            Inventory = inventoryTemp,
+                            InventoryId = inventoryId,
                             Quantity = receiptItem.Quantity
                         };
-                        await _unitOfWork.InventoryItemRepository.AddAsync(inventoryItemTemp, ct);
-                        inventoryTemp.Items.Add(inventoryItemTemp);
-                    }
 
-                    await _unitOfWork.CommitAsync(ct);
+                        await _unitOfWork
+                            .InventoryItemRepository
+                            .AddAsync(newItem, ct);
+                    }
                 }
+
+                // Дата фиксируется только при успешном проведении.
+                receipt.SoldAt = DateTime.UtcNow;
+
+                // Сохраняем остатки и дату одной транзакцией.
+                await _unitOfWork.CommitAsync(ct);
             }
             catch
             {
                 await _unitOfWork.RollbackAsync(ct);
-                throw new Exception("Подтверждение продажи не прошло");
+                throw;
             }
         }
+
+
 
         public async Task<Receipt> GetByIdAsync(Guid id)
         {

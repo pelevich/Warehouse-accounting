@@ -1,0 +1,223 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="App.Views.ReceiptView"
+             x:Name="ReceiptRoot"
+             BackgroundColor="#1F1F1F">
+
+    <ContentView.Resources>
+        <ResourceDictionary>
+            <Style x:Key="ReceiptPrimaryButton" TargetType="Button">
+                <Setter Property="BackgroundColor" Value="#AE98EA" />
+                <Setter Property="TextColor" Value="#211C30" />
+                <Setter Property="FontSize" Value="14" />
+                <Setter Property="FontAttributes" Value="Bold" />
+                <Setter Property="CornerRadius" Value="10" />
+                <Setter Property="HeightRequest" Value="44" />
+                <Setter Property="Padding" Value="18,0" />
+            </Style>
+            <Style x:Key="ReceiptHeaderText" TargetType="Label">
+                <Setter Property="FontSize" Value="12" />
+                <Setter Property="FontAttributes" Value="Bold" />
+                <Setter Property="TextColor" Value="#AFAFAF" />
+                <Setter Property="VerticalOptions" Value="Center" />
+            </Style>
+            <Style x:Key="ReceiptCellText" TargetType="Label">
+                <Setter Property="FontSize" Value="13" />
+                <Setter Property="TextColor" Value="#EAEAEA" />
+                <Setter Property="VerticalOptions" Value="Center" />
+                <Setter Property="LineBreakMode" Value="TailTruncation" />
+            </Style>
+            <Style x:Key="ReceiptQuantityButton" TargetType="Button">
+                <Setter Property="BackgroundColor" Value="#34303F" />
+                <Setter Property="TextColor" Value="#C5B4F5" />
+                <Setter Property="FontSize" Value="18" />
+                <Setter Property="FontAttributes" Value="Bold" />
+                <Setter Property="CornerRadius" Value="8" />
+                <Setter Property="HeightRequest" Value="36" />
+                <Setter Property="WidthRequest" Value="40" />
+                <Setter Property="Padding" Value="0" />
+            </Style>
+            <Style x:Key="ReceiptDeleteButton" TargetType="Button">
+                <Setter Property="BackgroundColor" Value="#9F353D" />
+                <Setter Property="TextColor" Value="White" />
+                <Setter Property="FontSize" Value="18" />
+                <Setter Property="FontAttributes" Value="Bold" />
+                <Setter Property="CornerRadius" Value="8" />
+                <Setter Property="HeightRequest" Value="36" />
+                <Setter Property="WidthRequest" Value="40" />
+                <Setter Property="Padding" Value="0" />
+            </Style>
+        </ResourceDictionary>
+    </ContentView.Resources>
+
+    <Grid Padding="24" RowDefinitions="Auto,Auto,*,Auto" RowSpacing="20">
+        <!-- Заголовок и добавление позиции -->
+        <Grid Grid.Row="0" ColumnDefinitions="*,Auto" ColumnSpacing="16">
+            <VerticalStackLayout Grid.Column="0" Spacing="5" VerticalOptions="Center">
+                <Label Text="Приход товаров" FontSize="26"
+                       FontAttributes="Bold" TextColor="White" />
+                <Label Text="Формирование поступления на склад"
+                       FontSize="13" TextColor="#929292" />
+            </VerticalStackLayout>
+            <HorizontalStackLayout Grid.Column="1" Spacing="12" VerticalOptions="Center">
+                <ActivityIndicator IsRunning="{Binding IsLoading}"
+                                   IsVisible="{Binding IsLoading}"
+                                   Color="#AE98EA" />
+                <Button x:Name="AddReceiptItemButton"
+                        Text="+  Добавить товар"
+                        Style="{StaticResource ReceiptPrimaryButton}"
+                        Command="{Binding AddReceiptItemCommand}" />
+            </HorizontalStackLayout>
+        </Grid>
+
+        <!-- Заголовок таблицы -->
+        <Border Grid.Row="1" BackgroundColor="#2C2C2C"
+                Stroke="#404040" StrokeThickness="1"
+                StrokeShape="RoundRectangle 10" Padding="16,14">
+            <Grid ColumnDefinitions="*,190,64" ColumnSpacing="16">
+                <Label Grid.Column="0" Text="НАЗВАНИЕ"
+                       Style="{StaticResource ReceiptHeaderText}" />
+                <Label Grid.Column="1" Text="КОЛИЧЕСТВО"
+                       Style="{StaticResource ReceiptHeaderText}"
+                       HorizontalTextAlignment="Center" />
+                <Label Grid.Column="2" Text="УДАЛИТЬ"
+                       Style="{StaticResource ReceiptHeaderText}"
+                       HorizontalTextAlignment="Center" />
+            </Grid>
+        </Border>
+
+        <!-- Прокручиваемый список позиций прихода -->
+        <Border Grid.Row="2" BackgroundColor="#242424"
+                Stroke="#3B3B3B" StrokeThickness="1"
+                StrokeShape="RoundRectangle 10" Padding="0">
+            <CollectionView ItemsSource="{Binding ReceiptItemModels}"
+                            SelectionMode="None" VerticalOptions="Fill">
+                <CollectionView.EmptyView>
+                    <VerticalStackLayout Padding="30" Spacing="8"
+                                         HorizontalOptions="Center"
+                                         VerticalOptions="Center">
+                        <Label Text="В приходе пока нет товаров"
+                               FontSize="17" FontAttributes="Bold"
+                               TextColor="#DDDDDD"
+                               HorizontalTextAlignment="Center" />
+                        <Label Text="Нажмите «Добавить товар», чтобы начать"
+                               FontSize="13" TextColor="#888888"
+                               HorizontalTextAlignment="Center" />
+                    </VerticalStackLayout>
+                </CollectionView.EmptyView>
+                <CollectionView.ItemTemplate>
+                    <DataTemplate>
+                        <VerticalStackLayout Spacing="0">
+                            <Grid Padding="16,12"
+                                  ColumnDefinitions="*,190,64"
+                                  ColumnSpacing="16"
+                                  MinimumHeightRequest="62">
+                                <Label Grid.Column="0" Text="{Binding Name}"
+                                       FontAttributes="Bold"
+                                       Style="{StaticResource ReceiptCellText}" />
+
+                                <Grid Grid.Column="1"
+      ColumnDefinitions="40,*,40"
+      ColumnSpacing="8"
+      VerticalOptions="Center">
+
+                                    <!-- УМЕНЬШИТЬ КОЛИЧЕСТВО -->
+                                    <Border Grid.Column="0"
+            WidthRequest="40"
+            HeightRequest="40"
+            BackgroundColor="#34303F"
+            StrokeThickness="0"
+            StrokeShape="RoundRectangle 8"
+            HorizontalOptions="Center"
+            VerticalOptions="Center">
+
+                                        <Border.Triggers>
+                                            <DataTrigger TargetType="Border"
+                         Binding="{Binding CanDecrement}"
+                         Value="False">
+                                                <Setter Property="Opacity" Value="0.4"/>
+                                                <Setter Property="InputTransparent" Value="True"/>
+                                            </DataTrigger>
+                                        </Border.Triggers>
+
+                                        <Border.GestureRecognizers>
+                                            <TapGestureRecognizer
+                Command="{Binding BindingContext.DecrQuantityCommand,
+                                  Source={x:Reference ReceiptRoot}}"
+                CommandParameter="{Binding .}"/>
+                                        </Border.GestureRecognizers>
+
+                                        <Label Text="−"
+               FontSize="22"
+               FontAttributes="Bold"
+               TextColor="#C5B4F5"
+               HorizontalOptions="Fill"
+               VerticalOptions="Fill"
+               HorizontalTextAlignment="Center"
+               VerticalTextAlignment="Center"
+               InputTransparent="True"/>
+                                    </Border>
+
+                                    <!-- КОЛИЧЕСТВО -->
+                                    <Label Grid.Column="1"
+           Text="{Binding Quantity}"
+           Style="{StaticResource ReceiptCellText}"
+           HorizontalOptions="Fill"
+           VerticalOptions="Center"
+           HorizontalTextAlignment="Center"/>
+
+                                    <!-- УВЕЛИЧИТЬ КОЛИЧЕСТВО -->
+                                    <Border Grid.Column="2"
+            WidthRequest="40"
+            HeightRequest="40"
+            BackgroundColor="#34303F"
+            StrokeThickness="0"
+            StrokeShape="RoundRectangle 8"
+            HorizontalOptions="Center"
+            VerticalOptions="Center">
+
+                                        <Border.GestureRecognizers>
+                                            <TapGestureRecognizer
+                Command="{Binding BindingContext.IncrQuantityCommand,
+                                  Source={x:Reference ReceiptRoot}}"
+                CommandParameter="{Binding .}"/>
+                                        </Border.GestureRecognizers>
+
+                                        <Label Text="+"
+               FontSize="22"
+               FontAttributes="Bold"
+               TextColor="#C5B4F5"
+               HorizontalOptions="Fill"
+               VerticalOptions="Fill"
+               HorizontalTextAlignment="Center"
+               VerticalTextAlignment="Center"
+               InputTransparent="True"/>
+                                    </Border>
+
+                                </Grid>
+
+                                <Button Grid.Column="2" Text="✕"
+                                        Style="{StaticResource ReceiptDeleteButton}"
+                                        HorizontalOptions="Center"
+                                        VerticalOptions="Center"
+                                        Command="{Binding BindingContext.DeleteItemCommand, Source={x:Reference ReceiptRoot}}"
+                                        CommandParameter="{Binding .}" />
+                            </Grid>
+                            <BoxView HeightRequest="1" BackgroundColor="#383838"
+                                     Margin="16,0" />
+                        </VerticalStackLayout>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+        </Border>
+
+        <!-- Кнопка всегда внизу, список выше прокручивается отдельно -->
+        <Grid Grid.Row="3" ColumnDefinitions="*,Auto">
+            <Button Grid.Column="1" x:Name="PushToStockButton"
+                    Text="Сохранить приход"
+                    Style="{StaticResource ReceiptPrimaryButton}"
+                    Command="{Binding PushToStockCommand}" />
+        </Grid>
+    </Grid>
+</ContentView>

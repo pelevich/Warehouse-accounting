@@ -10,6 +10,8 @@
         IReceiptItemRepository ReceiptItemRepository { get; }
         ISaleRepository SaleRepository { get; }
         ISaleItemRepository SaleItemRepository { get; }
+        IWorkShiftRepository WorkShiftRepository { get; }
+        IEmployeeRepository EmployeeRepository { get; }
 
 
         Task SaveChangesAsync(CancellationToken cancellationToken);

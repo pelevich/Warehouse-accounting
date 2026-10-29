@@ -1,0 +1,312 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="App.Views.EmployeesView"
+             x:Name="EmployeesRoot"
+             BackgroundColor="#1F1F1F">
+    <ContentView.Resources>
+        <ResourceDictionary>
+            <Style x:Key="AccentButton" TargetType="Button">
+                <Setter Property="BackgroundColor" Value="#AE98EA" />
+                <Setter Property="TextColor" Value="#211C30" />
+                <Setter Property="FontAttributes" Value="Bold" />
+                <Setter Property="FontSize" Value="14" />
+                <Setter Property="CornerRadius" Value="10" />
+                <Setter Property="HeightRequest" Value="44" />
+                <Setter Property="Padding" Value="20,0" />
+            </Style>
+            <Style x:Key="SecondaryButton" TargetType="Button">
+                <Setter Property="BackgroundColor" Value="#34303F" />
+                <Setter Property="TextColor" Value="#C5B4F5" />
+                <Setter Property="CornerRadius" Value="9" />
+                <Setter Property="FontSize" Value="13" />
+                <Setter Property="HeightRequest" Value="40" />
+            </Style>
+            <Style x:Key="FieldLabel" TargetType="Label">
+                <Setter Property="TextColor" Value="#C7C7C7" />
+                <Setter Property="FontSize" Value="13" />
+                <Setter Property="FontAttributes" Value="Bold" />
+            </Style>
+            <Style x:Key="TextField" TargetType="Entry">
+                <Setter Property="BackgroundColor" Value="#181818" />
+                <Setter Property="TextColor" Value="White" />
+                <Setter Property="PlaceholderColor" Value="#777777" />
+                <Setter Property="FontSize" Value="14" />
+                <Setter Property="HeightRequest" Value="46" />
+            </Style>
+        </ResourceDictionary>
+    </ContentView.Resources>
+
+    <!-- Список и всплывающая форма находятся в одном Grid.
+         Пока форма закрыта, она вообще не занимает места на странице. -->
+    <Grid>
+        <ScrollView>
+            <VerticalStackLayout Padding="24,30,24,40" Spacing="18">
+                <Grid ColumnDefinitions="*,Auto" ColumnSpacing="12">
+                    <VerticalStackLayout Spacing="5">
+                        <Label Text="Сотрудники" TextColor="White"
+                               FontSize="26" FontAttributes="Bold" />
+                        <Label Text="Список сотрудников и управление доступом"
+                               TextColor="#9B9B9B" FontSize="13" />
+                    </VerticalStackLayout>
+                    <Button Grid.Column="1"
+                            Text="+  Добавить сотрудника"
+                            Style="{StaticResource AccentButton}"
+                            Command="{Binding OpenCreateCommand}" />
+                </Grid>
+
+                <!-- Уведомление остаётся видимым, пока его не закроют. -->
+                <Border IsVisible="{Binding HasSuccess}"
+                        BackgroundColor="#213A30"
+                        Stroke="#377B5B" StrokeThickness="1"
+                        StrokeShape="RoundRectangle 10"
+                        Padding="14,10">
+                    <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="12">
+                        <Label Text="✓" TextColor="#80DEAB"
+                               FontSize="18" FontAttributes="Bold"
+                               VerticalOptions="Center" />
+                        <Label Grid.Column="1" Text="{Binding SuccessMessage}"
+                               TextColor="#B7F2D0" FontSize="14"
+                               VerticalOptions="Center" LineBreakMode="WordWrap" />
+                        <Button Grid.Column="2" Text="Закрыть"
+                                Style="{StaticResource SecondaryButton}"
+                                Command="{Binding DismissNoticeCommand}" />
+                    </Grid>
+                </Border>
+
+
+                <Border IsVisible="{Binding HasListError}"
+                        BackgroundColor="#3B2628"
+                        Stroke="#965357" StrokeThickness="1"
+                        StrokeShape="RoundRectangle 10" Padding="14,12">
+                    <Label Text="{Binding ListErrorMessage}"
+                           TextColor="#F2A5A8" FontSize="13"
+                           LineBreakMode="WordWrap" />
+                </Border>
+
+                <Border Stroke="#353535" BackgroundColor="#242424"
+                        StrokeThickness="1" StrokeShape="RoundRectangle 12"
+                        Padding="16">
+                    <VerticalStackLayout Spacing="14">
+                        <Grid ColumnDefinitions="*,Auto">
+                            <Label Text="Список сотрудников"
+                                   TextColor="#F0F0F0" FontSize="17"
+                                   FontAttributes="Bold" VerticalOptions="Center" />
+                            <Button
+                                Text="Обновить"
+                                Command="{Binding LoadCommand}"
+                                BackgroundColor="#332E40"
+                                TextColor="#C5B5F0"
+                                CornerRadius="10"
+                                Padding="16,10"
+                                HorizontalOptions="End" />
+                        </Grid>
+
+                        <ActivityIndicator IsRunning="{Binding IsBusy}"
+                                           IsVisible="{Binding IsBusy}"
+                                           Color="#AE98EA"
+                                           HorizontalOptions="Start" />
+
+                        <CollectionView ItemsSource="{Binding Employees}"
+                                        HeightRequest="420"
+                                        SelectionMode="None"
+                                        EmptyView="Сотрудники ещё не добавлены">
+                            <CollectionView.ItemTemplate>
+                                <DataTemplate x:DataType="{x:Null}">
+                                    <Border BackgroundColor="#292929"
+                                            Stroke="#363636" StrokeThickness="1"
+                                            StrokeShape="RoundRectangle 9"
+                                            Padding="14,11" Margin="0,0,0,8">
+                                        <Grid ColumnDefinitions="46,*,Auto"
+                                              ColumnSpacing="10">
+                                            <Border Grid.Column="0"
+                                                    BackgroundColor="#393344"
+                                                    StrokeThickness="0"
+                                                    WidthRequest="38"
+                                                    HeightRequest="38"
+                                                    StrokeShape="RoundRectangle 19">
+                                                <Label Text="👤"
+                                                       TextColor="#C7B8F3"
+                                                       FontSize="18"
+                                                       HorizontalOptions="Center"
+                                                       VerticalOptions="Center" />
+                                            </Border>
+                                            <VerticalStackLayout Grid.Column="1"
+                                                                 VerticalOptions="Center"
+                                                                 Spacing="4">
+                                                <Label Text="{Binding FullName}"
+                                                       TextColor="#EFEFEF"
+                                                       FontAttributes="Bold"
+                                                       FontSize="14" />
+                                                <HorizontalStackLayout Spacing="12">
+                                                    <Label Text="{Binding StatusText}"
+                                                           TextColor="#66CC91"
+                                                           FontSize="12">
+                                                        <Label.Triggers>
+                                                            <DataTrigger TargetType="Label"
+                                                                         Binding="{Binding IsActive}"
+                                                                         Value="False">
+                                                                <Setter Property="TextColor"
+                                                                        Value="#999999" />
+                                                            </DataTrigger>
+                                                        </Label.Triggers>
+                                                    </Label>
+                                                    <Label Text="Администратор"
+                                                           FontSize="12"
+                                                           TextColor="#C5B4F5"
+                                                           IsVisible="{Binding IsAdmin}" />
+                                                </HorizontalStackLayout>
+                                            </VerticalStackLayout>
+                                            <Button Grid.Column="2"
+                                                    Text="Изменить"
+                                                    Style="{StaticResource SecondaryButton}"
+                                                    VerticalOptions="Center"
+                                                    Command="{Binding Source={x:Reference EmployeesRoot},
+                                                                      Path=BindingContext.EditEmployeeCommand}"
+                                                    CommandParameter="{Binding .}" />
+                                        </Grid>
+                                    </Border>
+                                </DataTemplate>
+                            </CollectionView.ItemTemplate>
+                        </CollectionView>
+                    </VerticalStackLayout>
+                </Border>
+            </VerticalStackLayout>
+        </ScrollView>
+
+        <!-- Диалог создания / редактирования. Затемнение перекрывает список. -->
+        <Grid IsVisible="{Binding IsFormOpen}"
+              BackgroundColor="#D9000000"
+              Padding="24,16">
+            <Border BackgroundColor="#262626"
+                    Stroke="#49404F" StrokeThickness="1"
+                    StrokeShape="RoundRectangle 16"
+                    Padding="0"
+                    MaximumWidthRequest="700"
+                    MaximumHeightRequest="760"
+                    HorizontalOptions="Fill"
+                    VerticalOptions="Center">
+                <Grid RowDefinitions="Auto,*,Auto">
+                    <!-- Заголовок диалога -->
+                    <Grid Padding="24,20,24,16" ColumnDefinitions="*,Auto">
+                        <VerticalStackLayout Spacing="4">
+                            <Label Text="{Binding FormTitle}"
+                                   TextColor="White" FontSize="21"
+                                   FontAttributes="Bold" />
+                            <Label Text="{Binding FormSubtitle}"
+                                   TextColor="#A7A7A7" FontSize="12" />
+                        </VerticalStackLayout>
+                        <Button Grid.Column="1" Text="✕"
+                                Style="{StaticResource SecondaryButton}"
+                                WidthRequest="42"
+                                Command="{Binding CancelEditCommand}" />
+                    </Grid>
+
+                    <!-- Прокрутка только у полей, кнопки остаются внизу -->
+                    <ScrollView Grid.Row="1">
+                        <VerticalStackLayout Padding="24,8,24,20" Spacing="14">
+                            <Grid ColumnDefinitions="*,*" ColumnSpacing="14">
+                                <VerticalStackLayout Spacing="5">
+                                    <Label Text="Фамилия" Style="{StaticResource FieldLabel}" />
+                                    <Entry Text="{Binding LastName, Mode=TwoWay}"
+                                           Placeholder="Иванов"
+                                           Style="{StaticResource TextField}" />
+                                </VerticalStackLayout>
+                                <VerticalStackLayout Grid.Column="1" Spacing="5">
+                                    <Label Text="Имя" Style="{StaticResource FieldLabel}" />
+                                    <Entry Text="{Binding FirstName, Mode=TwoWay}"
+                                           Placeholder="Иван"
+                                           Style="{StaticResource TextField}" />
+                                </VerticalStackLayout>
+                            </Grid>
+                            <VerticalStackLayout Spacing="5">
+                                <Label Text="Отчество" Style="{StaticResource FieldLabel}" />
+                                <Entry Text="{Binding MiddleName, Mode=TwoWay}"
+                                       Placeholder="Иванович"
+                                       Style="{StaticResource TextField}" />
+                            </VerticalStackLayout>
+
+                            <Border BackgroundColor="#302E33" StrokeThickness="0"
+                                    StrokeShape="RoundRectangle 9" Padding="14,12">
+                                <Grid ColumnDefinitions="*,Auto" ColumnSpacing="12">
+                                    <VerticalStackLayout Spacing="3">
+                                        <Label Text="Права администратора"
+                                               TextColor="#F1F1F1"
+                                               FontAttributes="Bold" FontSize="14" />
+                                        <Label Text="Доступ к управлению сотрудниками"
+                                               TextColor="#A4A4A4" FontSize="12" />
+                                    </VerticalStackLayout>
+                                    <Switch Grid.Column="1"
+                                            IsToggled="{Binding IsAdmin, Mode=TwoWay}"
+                                            OnColor="#AE98EA"
+                                            VerticalOptions="Center" />
+                                </Grid>
+                            </Border>
+
+                            <VerticalStackLayout Spacing="12" IsVisible="{Binding IsAdmin}">
+                                <VerticalStackLayout Spacing="5">
+                                    <Label Text="Логин администратора"
+                                           Style="{StaticResource FieldLabel}" />
+                                    <Entry Text="{Binding Login, Mode=TwoWay}"
+                                           Placeholder="Логин"
+                                           Style="{StaticResource TextField}" />
+                                </VerticalStackLayout>
+                                <VerticalStackLayout Spacing="5">
+                                    <Label Text="Пароль администратора"
+                                           Style="{StaticResource FieldLabel}" />
+                                    <Entry Text="{Binding NewPassword, Mode=TwoWay}"
+                                           IsPassword="True"
+                                           Placeholder="Новый пароль (от 8 символов)"
+                                           Style="{StaticResource TextField}" />
+                                    <Label Text="При редактировании оставьте пустым, чтобы не менять пароль"
+                                           IsVisible="{Binding IsEditing}"
+                                           TextColor="#929292" FontSize="11" />
+                                </VerticalStackLayout>
+                            </VerticalStackLayout>
+
+                            <Border BackgroundColor="#302E33" StrokeThickness="0"
+                                    StrokeShape="RoundRectangle 9" Padding="14,12"
+                                    IsVisible="{Binding IsEditing}">
+                                <Grid ColumnDefinitions="*,Auto" ColumnSpacing="12">
+                                    <VerticalStackLayout Spacing="3">
+                                        <Label Text="Сотрудник активен"
+                                               TextColor="#F1F1F1"
+                                               FontAttributes="Bold" FontSize="14" />
+                                        <Label Text="Неактивный сотрудник не сможет открыть смену"
+                                               TextColor="#A4A4A4" FontSize="12" />
+                                    </VerticalStackLayout>
+                                    <Switch Grid.Column="1"
+                                            IsToggled="{Binding IsActive, Mode=TwoWay}"
+                                            OnColor="#AE98EA"
+                                            VerticalOptions="Center" />
+                                </Grid>
+                            </Border>
+
+                            <Border IsVisible="{Binding HasError}"
+                                    BackgroundColor="#432B2D"
+                                    Stroke="#965357" StrokeThickness="1"
+                                    StrokeShape="RoundRectangle 8" Padding="12,10">
+                                <Label Text="{Binding ErrorMessage}"
+                                       TextColor="#F2A5A8" FontSize="13"
+                                       LineBreakMode="WordWrap" />
+                            </Border>
+                        </VerticalStackLayout>
+                    </ScrollView>
+
+                    <Grid Grid.Row="2" ColumnDefinitions="Auto,*"
+                          ColumnSpacing="12" Padding="24,16,24,22"
+                          BackgroundColor="#262626">
+                        <Button Text="Отмена"
+                                Style="{StaticResource SecondaryButton}"
+                                WidthRequest="120"
+                                Command="{Binding CancelEditCommand}" />
+                        <Button Grid.Column="1"
+                                Text="{Binding SaveButtonText}"
+                                Style="{StaticResource AccentButton}"
+                                Command="{Binding SaveCommand}" />
+                    </Grid>
+                </Grid>
+            </Border>
+        </Grid>
+    </Grid>
+</ContentView>

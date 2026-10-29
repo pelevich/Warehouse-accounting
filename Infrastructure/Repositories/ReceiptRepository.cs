@@ -17,17 +17,21 @@ namespace Infrastructure.Repositories
         public async Task<Receipt?> GetByIdAsync(Guid id, CancellationToken ct = default)
         {
             return await _context.Receipts
-                    .Include(r => r.Items)
+                .Include(r => r.Items)
                     .ThenInclude(i => i.Product)
-                    .FirstOrDefaultAsync(r => r.Id == id, ct);
+                .FirstOrDefaultAsync(r => r.Id == id, ct);
         }
 
         public async Task<IEnumerable<Receipt>> GetAllAsync(CancellationToken ct = default)
         {
             return await _context.Receipts
-                    .Include(f => f.Items)
-                    .AsNoTracking()
-                    .ToListAsync(ct);
+                .AsNoTracking()
+                .Include(r => r.WorkShift)
+                    .ThenInclude(w => w!.Employee)
+                .Include(r => r.Items)
+                    .ThenInclude(i => i.Product)
+                .AsSplitQuery()
+                .ToListAsync(ct);
         }
 
         public async Task<Receipt> AddAsync(Receipt receiptItem, CancellationToken ct = default)

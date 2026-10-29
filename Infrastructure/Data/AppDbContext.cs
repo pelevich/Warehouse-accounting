@@ -8,8 +8,14 @@ namespace Infrastructure.Data
 {
     public class AppDbContext : DbContext
     {
-        public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) 
+        public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
         {
+            bool isDesignTime = AppDomain.CurrentDomain.FriendlyName.Contains("ef", StringComparison.OrdinalIgnoreCase) ||
+                                AppDomain.CurrentDomain.FriendlyName.Contains("dotnet", StringComparison.OrdinalIgnoreCase);
+
+            if (isDesignTime)
+                return;
+
             var connection = (SqliteConnection)this.Database.GetDbConnection();
             if (connection.State != ConnectionState.Open)
                 connection.Open();
@@ -23,7 +29,12 @@ namespace Infrastructure.Data
             if (extensionFile is null) return;
 
             var extensionPath = Path.Combine(AppContext.BaseDirectory, "ext", extensionFile);
-            connection.LoadExtension(extensionPath, "sqlite3_unicode_init");
+
+            // Добавим проверку на существование файла (чтобы приложение не падало)
+            if (File.Exists(extensionPath))
+            {
+                connection.LoadExtension(extensionPath, "sqlite3_unicode_init");
+            }
         }
 
         public DbSet<Product> Products { get; set; }
@@ -34,6 +45,8 @@ namespace Infrastructure.Data
         public DbSet<ReceiptItem> ReceiptItems{ get; set; }
         public DbSet<Sale> Sales { get; set; }
         public DbSet<SaleItem> SaleItems { get; set; }
+        public DbSet<Employee> Employees => Set<Employee>();
+        public DbSet<WorkShift> WorkShifts => Set<WorkShift>();
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -74,9 +87,45 @@ namespace Infrastructure.Data
                 entity.HasIndex(e => new { e.InventoryId, e.ProductId }).IsUnique();
             });
 
+            modelBuilder.Entity<Employee>(entity =>
+            {
+                entity.HasKey(e => e.Id);
+                entity.Property(e => e.FirstName).IsRequired().HasMaxLength(200);
+                entity.Property(e => e.MiddleName).IsRequired().HasMaxLength(200);
+                entity.Property(e => e.LastName).IsRequired().HasMaxLength(200);
+                entity.Property(e => e.IsActive).IsRequired();
+            });
+
+            modelBuilder.Entity<WorkShift>(entity =>
+            {
+                entity.HasKey(e => e.Id);
+
+                entity.Property(e => e.OpenedAt)
+                      .IsRequired();
+
+                entity.Property(e => e.ClosedAt)
+                      .IsRequired(false);
+
+                entity.Ignore(e => e.IsOpen);
+
+                entity.HasOne(e => e.Employee)
+                      .WithMany(e => e.WorkShifts)
+                      .HasForeignKey(e => e.EmployeeId)
+                      .OnDelete(DeleteBehavior.Restrict);
+
+                entity.HasIndex(e => e.EmployeeId);
+                entity.HasIndex(e => e.OpenedAt);
+            });
+
             modelBuilder.Entity<Receipt>(entity =>
             {
                 entity.HasKey(e => e.Id);
+
+                entity.HasOne(e => e.WorkShift)
+                      .WithMany(s => s.Receipts)
+                      .HasForeignKey(e => e.WorkShiftId)
+                      .OnDelete(DeleteBehavior.Restrict);
+                entity.HasIndex(e => e.WorkShiftId);
 
                 entity.HasMany(e => e.Items)
                       .WithOne(i => i.Receipt)
@@ -98,6 +147,15 @@ namespace Infrastructure.Data
             modelBuilder.Entity<Sale>(entity =>
             {
                 entity.HasKey(e => e.Id);
+
+                entity.HasOne(e => e.WorkShift)
+                      .WithMany(s => s.Sales)
+                      .HasForeignKey(e => e.WorkShiftId)
+                      .OnDelete(DeleteBehavior.Restrict);
+
+                entity.HasIndex(e => e.WorkShiftId);
+
+                entity.Ignore(e => e.TotalPrice);
 
                 entity.HasMany(e => e.Items)
                       .WithOne(i => i.Sale)

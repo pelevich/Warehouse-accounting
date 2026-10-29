@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="App.Views.HistoryPage"
+             BackgroundColor="#1F1F1F"
+             Title="История">
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <Style x:Key="HistoryTabBorder" TargetType="Border">
+                <Setter Property="BackgroundColor" Value="#292929"/>
+                <Setter Property="Stroke" Value="#383838"/>
+                <Setter Property="StrokeThickness" Value="1"/>
+                <Setter Property="StrokeShape" Value="RoundRectangle 10"/>
+                <Setter Property="Padding" Value="15,10"/>
+            </Style>
+            <Style x:Key="HistoryTabLabel" TargetType="Label">
+                <Setter Property="VerticalTextAlignment" Value="Center"/>
+                <Setter Property="FontSize" Value="14"/>
+                <Setter Property="TextColor" Value="#B0B0B0"/>
+                <Setter Property="InputTransparent" Value="True"/>
+            </Style>
+        </ResourceDictionary>
+    </ContentPage.Resources>
+
+    <Grid ColumnDefinitions="200,*" ColumnSpacing="0">
+        <Border Grid.Column="0" BackgroundColor="#2C3E50" StrokeThickness="0">
+            <Grid Padding="8" RowDefinitions="Auto,*,Auto">
+                <VerticalStackLayout Grid.Row="0" Spacing="10">
+                    <Label Text="Складской учет" TextColor="White" FontSize="20"
+                           FontAttributes="Bold" HorizontalOptions="Center" Margin="0,20,0,30" />
+                    <Button Text="📦 Склад" Command="{Binding GoWarehouseCommand}" BackgroundColor="#34495E" TextColor="White" FontSize="16" HeightRequest="50" CornerRadius="8" HorizontalOptions="Fill" />
+                    <Button Text="💰 Продажа" Command="{Binding GoSaleCommand}" BackgroundColor="#34495E" TextColor="White" FontSize="16" HeightRequest="50" CornerRadius="8" HorizontalOptions="Fill" />
+                    <Button Text="👥 Сотрудники" Command="{Binding ShowEmployeesCommand}" IsVisible="{Binding Session.IsAdmin}" BackgroundColor="#34495E" TextColor="White" FontSize="16" HeightRequest="50" CornerRadius="8" HorizontalOptions="Fill" />
+                    <Button Text="◷  История" BackgroundColor="#493E59" TextColor="#E3D4FF" FontAttributes="Bold" FontSize="16" HeightRequest="50" CornerRadius="8" HorizontalOptions="Fill" />
+                </VerticalStackLayout>
+                <Button Grid.Row="2" Text="Закрыть смену" Command="{Binding GoShiftCommand}"
+                        BackgroundColor="#34495E" TextColor="White"
+                        FontSize="16" HeightRequest="50" CornerRadius="8" Margin="0,0,0,10" />
+            </Grid>
+        </Border>
+
+        <Grid Grid.Column="1" RowDefinitions="Auto,*" RowSpacing="0">
+            <HorizontalStackLayout Grid.Row="0"
+                                   Padding="24,18,24,8"
+                                   Spacing="10"
+                                   HorizontalOptions="Start">
+                <Border Style="{StaticResource HistoryTabBorder}">
+                    <Border.Triggers>
+                        <DataTrigger TargetType="Border" Binding="{Binding IsSalesSelected}" Value="True">
+                            <Setter Property="BackgroundColor" Value="#393348"/>
+                            <Setter Property="Stroke" Value="#806DAF"/>
+                        </DataTrigger>
+                    </Border.Triggers>
+                    <Border.GestureRecognizers>
+                        <TapGestureRecognizer Command="{Binding ShowSalesCommand}"/>
+                    </Border.GestureRecognizers>
+                    <Label Text="История продаж" Style="{StaticResource HistoryTabLabel}">
+                        <Label.Triggers>
+                            <DataTrigger TargetType="Label" Binding="{Binding IsSalesSelected}" Value="True">
+                                <Setter Property="TextColor" Value="#E3D4FF"/>
+                                <Setter Property="FontAttributes" Value="Bold"/>
+                            </DataTrigger>
+                        </Label.Triggers>
+                    </Label>
+                </Border>
+                <Border Style="{StaticResource HistoryTabBorder}">
+                    <Border.Triggers>
+                        <DataTrigger TargetType="Border" Binding="{Binding IsReceiptsSelected}" Value="True">
+                            <Setter Property="BackgroundColor" Value="#393348"/>
+                            <Setter Property="Stroke" Value="#806DAF"/>
+                        </DataTrigger>
+                    </Border.Triggers>
+                    <Border.GestureRecognizers>
+                        <TapGestureRecognizer Command="{Binding ShowReceiptsCommand}"/>
+                    </Border.GestureRecognizers>
+                    <Label Text="История прихода" Style="{StaticResource HistoryTabLabel}">
+                        <Label.Triggers>
+                            <DataTrigger TargetType="Label" Binding="{Binding IsReceiptsSelected}" Value="True">
+                                <Setter Property="TextColor" Value="#E3D4FF"/>
+                                <Setter Property="FontAttributes" Value="Bold"/>
+                            </DataTrigger>
+                        </Label.Triggers>
+                    </Label>
+                </Border>
+                <Border Style="{StaticResource HistoryTabBorder}">
+                    <Border.Triggers>
+                        <DataTrigger TargetType="Border" Binding="{Binding IsShiftsSelected}" Value="True">
+                            <Setter Property="BackgroundColor" Value="#393348"/>
+                            <Setter Property="Stroke" Value="#806DAF"/>
+                        </DataTrigger>
+                    </Border.Triggers>
+                    <Border.GestureRecognizers>
+                        <TapGestureRecognizer Command="{Binding ShowShiftsCommand}"/>
+                    </Border.GestureRecognizers>
+                    <Label Text="История смен" Style="{StaticResource HistoryTabLabel}">
+                        <Label.Triggers>
+                            <DataTrigger TargetType="Label" Binding="{Binding IsShiftsSelected}" Value="True">
+                                <Setter Property="TextColor" Value="#E3D4FF"/>
+                                <Setter Property="FontAttributes" Value="Bold"/>
+                            </DataTrigger>
+                        </Label.Triggers>
+                    </Label>
+                </Border>
+            </HorizontalStackLayout>
+            <ContentView Grid.Row="1" Content="{Binding CurrentView}"/>
+        </Grid>
+    </Grid>
+</ContentPage>

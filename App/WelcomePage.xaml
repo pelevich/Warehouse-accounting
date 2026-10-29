@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="App.Views.WelcomePage"
+             BackgroundColor="#1F1F1F" Title="Начало работы">
+    <ScrollView>
+        <VerticalStackLayout Padding="24,48" Spacing="22"
+                             HorizontalOptions="Center" WidthRequest="560">
+            <Label Text="Складской учёт" FontSize="29" FontAttributes="Bold"
+                   TextColor="White" HorizontalOptions="Center" />
+            <Label Text="Открытие рабочей смены" FontSize="15" TextColor="#B5B5B5"
+                   HorizontalOptions="Center" />
+            <ActivityIndicator IsVisible="{Binding IsBusy}" IsRunning="{Binding IsBusy}"
+                               Color="#AE98EA" />
+            <!-- Режим кассира: скрывается при показе формы администратора -->
+            <Border BackgroundColor="#292929" Stroke="#454049"
+                    StrokeShape="RoundRectangle 14" Padding="24">
+                <Border.Triggers>
+                    <DataTrigger TargetType="Border"
+                                 Binding="{Binding ShowAdminLogin}"
+                                 Value="True">
+                        <Setter Property="IsVisible" Value="False" />
+                    </DataTrigger>
+                </Border.Triggers>
+                <VerticalStackLayout Spacing="15">
+                    <Label Text="Начать работу" FontSize="20" FontAttributes="Bold"
+                           TextColor="White" />
+                    <Label Text="{Binding OpenShiftText}" TextColor="#C7B8F3"
+                           IsVisible="{Binding HasOpenShift}" />
+                    <Button Text="Продолжить открытую смену"
+                            IsVisible="{Binding HasOpenShift}"
+                            Command="{Binding ContinueShiftCommand}"
+                            BackgroundColor="#AE98EA" TextColor="#211C30"
+                            FontAttributes="Bold" HeightRequest="48" CornerRadius="10" />
+                    <VerticalStackLayout Spacing="10" IsVisible="{Binding CanOpenNew}">
+                        <Picker ItemsSource="{Binding Employees}"
+                                ItemDisplayBinding="{Binding FullName}"
+                                SelectedItem="{Binding SelectedEmployee}"
+                                TextColor="White" BackgroundColor="#343434"
+                                Title="Выберите сотрудника" />
+                        <Label Text="Наличные в кассе при открытии, ₽" TextColor="#DDDDDD" />
+                        <Entry Text="{Binding OpeningCashText}" Keyboard="Numeric"
+                               BackgroundColor="#343434" TextColor="White"
+                               Placeholder="0,00" PlaceholderColor="#888888" />
+                        <Button Text="Открыть смену" Command="{Binding OpenShiftCommand}"
+                                BackgroundColor="#AE98EA" TextColor="#211C30"
+                                FontAttributes="Bold" HeightRequest="48" CornerRadius="10" />
+                        <Label Text="{Binding ErrorMessage}" IsVisible="{Binding HasError}"
+                                TextColor="#F09A9A" LineBreakMode="WordWrap" />
+                    </VerticalStackLayout>
+                </VerticalStackLayout>
+            </Border>
+            <!-- Режим администратора: показывается ВМЕСТО формы смены -->
+            <Border IsVisible="{Binding ShowAdminLogin}" BackgroundColor="#292929"
+                    Stroke="#454049" StrokeShape="RoundRectangle 14" Padding="24">
+                <VerticalStackLayout Spacing="12">
+                    <Label Text="Вход администратора" TextColor="White"
+                           FontSize="19" FontAttributes="Bold" />
+                    <Entry Text="{Binding Login}" Placeholder="Логин"
+                           TextColor="White" BackgroundColor="#343434" />
+                    <Entry Text="{Binding Password}" IsPassword="True"
+                           Placeholder="Пароль" TextColor="White"
+                           BackgroundColor="#343434" />
+                    <Label
+                            Text="{Binding ErrorMessage}"
+                            TextColor="#E57373"
+                            FontSize="13"
+                            IsVisible="{Binding HasError}" />
+                    <Button Text="Войти" Command="{Binding LoginAdminCommand}"
+                            BackgroundColor="#AE98EA" TextColor="#211C30"
+                            FontAttributes="Bold" HeightRequest="48" CornerRadius="10" />
+                </VerticalStackLayout>
+            </Border>
+
+            <!-- Одна кнопка переключает оба режима -->
+            <Button Text="Войти как администратор"
+                    Command="{Binding ToggleAdminLoginCommand}"
+                    BackgroundColor="Transparent" TextColor="#C5B4F5">
+                <Button.Triggers>
+                    <DataTrigger TargetType="Button"
+                                 Binding="{Binding ShowAdminLogin}"
+                                 Value="True">
+                        <Setter Property="Text" Value="Открыть смену" />
+                    </DataTrigger>
+                </Button.Triggers>
+            </Button>
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>

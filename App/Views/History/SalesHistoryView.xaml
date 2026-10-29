@@ -1,0 +1,223 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:App.ViewModels.Tabs"
+             xmlns:dto="clr-namespace:Services.DTO;assembly=Services"
+             x:Class="App.Views.SalesHistoryView"
+             x:DataType="vm:SalesHistoryViewModel"
+             BackgroundColor="#1F1F1F">
+
+    <Grid Padding="24,18,24,22"
+          RowDefinitions="Auto,Auto,Auto,*,Auto"
+          RowSpacing="16">
+
+        <!-- Заголовок -->
+        <Grid Grid.Row="0" ColumnDefinitions="*,Auto" ColumnSpacing="12">
+            <VerticalStackLayout Spacing="5">
+                <Label Text="{Binding Title}" FontSize="25" FontAttributes="Bold"
+                       TextColor="#F7F7F8"/>
+                <Label Text="{Binding Subtitle}" FontSize="13" TextColor="#9999A3"/>
+            </VerticalStackLayout>
+            <Button Grid.Column="1" Text="↻  Обновить"
+                    Command="{Binding RefreshCommand}"
+                    BackgroundColor="#34313C" TextColor="#D4C3FF"
+                    CornerRadius="10" HeightRequest="42" Padding="20,0"
+                    VerticalOptions="Center"/>
+        </Grid>
+
+        <!-- Фильтры -->
+        <Border Grid.Row="1" BackgroundColor="#292929"
+                Stroke="#3B3B3B" StrokeThickness="1"
+                StrokeShape="RoundRectangle 14" Padding="18,16">
+            <VerticalStackLayout Spacing="13">
+                <Grid ColumnDefinitions="*,*,Auto" ColumnSpacing="14">
+                    <VerticalStackLayout Grid.Column="0" Spacing="6">
+                        <Label Text="Сотрудник" FontSize="12" TextColor="#AFAFB9"/>
+                        <Picker ItemsSource="{Binding Employees}"
+                                SelectedItem="{Binding SelectedEmployee, Mode=TwoWay}"
+                                ItemDisplayBinding="{Binding Name}"
+                                BackgroundColor="#353535"
+                                TextColor="White"
+                                TitleColor="#AFAFB9"/>
+                    </VerticalStackLayout>
+
+                    <VerticalStackLayout Grid.Column="1" Spacing="6">
+                        <Label Text="Сортировка" FontSize="12" TextColor="#AFAFB9"/>
+                        <Picker ItemsSource="{Binding SortOptions}"
+                                SelectedItem="{Binding SelectedSort, Mode=TwoWay}"
+                                BackgroundColor="#353535"
+                                TextColor="White"/>
+                    </VerticalStackLayout>
+
+                    <Button Grid.Column="2" Text="Сбросить"
+                            Command="{Binding ResetFiltersCommand}"
+                            BackgroundColor="#38333F" TextColor="#CFC0F1"
+                            CornerRadius="10" Padding="16,0"
+                            HeightRequest="48" VerticalOptions="End"/>
+                </Grid>
+
+                <Grid ColumnDefinitions="Auto,Auto,*,Auto"
+                      ColumnSpacing="16" VerticalOptions="Center">
+                    <HorizontalStackLayout Grid.Column="0" Spacing="6">
+                        <CheckBox IsChecked="{Binding UseDateFilter, Mode=TwoWay}"
+                                  Color="#AE98EA"/>
+                        <Label Text="Период" TextColor="#E7E7EC"
+                               FontSize="13" VerticalOptions="Center"/>
+                    </HorizontalStackLayout>
+
+                    <HorizontalStackLayout Grid.Column="1" Spacing="8"
+                                           IsVisible="{Binding UseDateFilter}">
+                        <Label Text="С" TextColor="#BDBDC7" VerticalOptions="Center"/>
+                        <DatePicker Date="{Binding DateFrom, Mode=TwoWay}"
+                                    Format="dd.MM.yyyy"
+                                    BackgroundColor="#353535" TextColor="White"/>
+                        <Label Text="По" TextColor="#BDBDC7" VerticalOptions="Center"/>
+                        <DatePicker Date="{Binding DateTo, Mode=TwoWay}"
+                                    Format="dd.MM.yyyy"
+                                    BackgroundColor="#353535" TextColor="White"/>
+                    </HorizontalStackLayout>
+                </Grid>
+            </VerticalStackLayout>
+        </Border>
+
+        <Grid Grid.Row="2" ColumnDefinitions="*,Auto">
+            <Label Text="ИСТОРИЯ ОПЕРАЦИЙ" FontSize="12"
+                   FontAttributes="Bold" TextColor="#9B9BA6"
+                   CharacterSpacing="1" VerticalOptions="Center"/>
+            <Label Grid.Column="1"
+                   Text="{Binding VisibleCount, StringFormat='Записей: {0}'}"
+                   FontSize="12" TextColor="#9B9BA6"/>
+        </Grid>
+
+        <!-- Коллекция сама прокручивается в ограниченной области Grid "*" -->
+        <Grid Grid.Row="3">
+            <CollectionView ItemsSource="{Binding Records}"
+                            SelectionMode="None"
+                            VerticalScrollBarVisibility="Always">
+                <CollectionView.ItemTemplate>
+                    <DataTemplate x:DataType="vm:HistoryRow">
+                        <Border BackgroundColor="#272727"
+                                Stroke="#3D3D3D" StrokeThickness="1"
+                                StrokeShape="RoundRectangle 12"
+                                Margin="0,0,0,10">
+                            <VerticalStackLayout Spacing="0">
+                                <Grid Padding="20,15"
+                                      ColumnDefinitions="*,Auto"
+                                      ColumnSpacing="16">
+                                    <Grid.GestureRecognizers>
+                                        <TapGestureRecognizer Command="{Binding ToggleCommand}"/>
+                                    </Grid.GestureRecognizers>
+
+                                    <VerticalStackLayout Spacing="6">
+                                        <Label Text="{Binding DateText}"
+                                               TextColor="#F4F4F6"
+                                               FontSize="15"
+                                               FontAttributes="Bold"/>
+                                        <Label Text="{Binding EmployeeName}"
+                                               TextColor="#B7B7C1"
+                                               FontSize="13"/>
+                                        <Label Text="{Binding SummaryText}"
+                                               TextColor="#B8A3EE"
+                                               FontSize="13"/>
+                                    </VerticalStackLayout>
+
+                                    <Border Grid.Column="1" WidthRequest="38" HeightRequest="38"
+                                            BackgroundColor="#36313D" Stroke="#65557A"
+                                            StrokeShape="RoundRectangle 19" VerticalOptions="Center">
+                                        <Label Text="{Binding Arrow}" FontSize="22" FontAttributes="Bold"
+                                               TextColor="#D4C3FF" HorizontalTextAlignment="Center"
+                                               VerticalTextAlignment="Center" InputTransparent="True"/>
+                                    </Border>
+                                </Grid>
+
+                                <VerticalStackLayout IsVisible="{Binding IsExpanded}"
+                                                     Spacing="13"
+                                                     Padding="20,0,20,18">
+                                    <BoxView HeightRequest="1" Color="#414141"/>
+                                    <Grid ColumnDefinitions="140,*" ColumnSpacing="12">
+                                        <Label Text="Документ" FontSize="12"
+                                               TextColor="#9999A3"/>
+                                        <Label Grid.Column="1"
+                                               Text="{Binding Id}"
+                                               FontSize="12" TextColor="#D7D7DF"
+                                               LineBreakMode="CharacterWrap"/>
+                                    </Grid>
+                                    <Grid ColumnDefinitions="140,*" ColumnSpacing="12">
+                                        <Label Text="Смена" FontSize="12"
+                                               TextColor="#9999A3"/>
+                                        <Label Grid.Column="1"
+                                               Text="{Binding ShiftText}"
+                                               FontSize="12" TextColor="#D7D7DF"
+                                               LineBreakMode="CharacterWrap"/>
+                                    </Grid>
+                                    <Grid ColumnDefinitions="140,*" ColumnSpacing="12">
+                                        <Label Text="Оплата" FontSize="12"
+                                               TextColor="#9999A3"/>
+                                        <Label Grid.Column="1"
+                                               Text="{Binding PaymentType}"
+                                               FontSize="12" TextColor="#D7D7DF"/>
+                                    </Grid>
+
+                                    <Label Text="СОСТАВ ДОКУМЕНТА"
+                                           FontSize="11" FontAttributes="Bold"
+                                           CharacterSpacing="1"
+                                           TextColor="#9F9FA9"
+                                           Margin="0,6,0,0"/>
+
+                                    <VerticalStackLayout
+                                        BindableLayout.ItemsSource="{Binding Lines}"
+                                        Spacing="8">
+                                        <BindableLayout.ItemTemplate>
+                                            <DataTemplate x:DataType="dto:HistoryLineDto">
+                                                <Border BackgroundColor="#313131"
+                                                        StrokeThickness="0"
+                                                        StrokeShape="RoundRectangle 8"
+                                                        Padding="12,10">
+                                                    <Grid ColumnDefinitions="*,Auto"
+                                                          ColumnSpacing="10">
+                                                        <VerticalStackLayout Spacing="4">
+                                                            <Label Text="{Binding ProductName}"
+                                                                   TextColor="White"
+                                                                   FontAttributes="Bold"
+                                                                   FontSize="13"/>
+                                                            <Label Text="{Binding Barcode}"
+                                                                   TextColor="#9999A3"
+                                                                   FontSize="11"/>
+                                                        </VerticalStackLayout>
+                                                        <Label Grid.Column="1"
+                                                               Text="{Binding Quantity, StringFormat='{0} шт.'}"
+                                                               TextColor="#D4C3FF"
+                                                               FontSize="13"
+                                                               VerticalOptions="Center"/>
+                                                    </Grid>
+                                                </Border>
+                                            </DataTemplate>
+                                        </BindableLayout.ItemTemplate>
+                                    </VerticalStackLayout>
+                                </VerticalStackLayout>
+                            </VerticalStackLayout>
+                        </Border>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+
+            <Label Text="{Binding EmptyMessage}"
+                   IsVisible="{Binding IsEmpty}"
+                   TextColor="#9999A3"
+                   FontSize="15"
+                   HorizontalOptions="Center"
+                   VerticalOptions="Center"/>
+
+            <ActivityIndicator IsRunning="{Binding IsBusy}"
+                               IsVisible="{Binding IsBusy}"
+                               Color="#B8A3EE"
+                               HorizontalOptions="Center"
+                               VerticalOptions="Center"/>
+        </Grid>
+
+        <Label Grid.Row="4" Text="{Binding ErrorMessage}"
+               IsVisible="{Binding HasError}"
+               TextColor="#F08D8D"
+               FontSize="12"/>
+    </Grid>
+</ContentView>

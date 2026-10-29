@@ -28,8 +28,9 @@ namespace Infrastructure.Repositories
 
         public async Task<InventoryItem?> GetByProductIdAsync(Guid productId, CancellationToken ct = default)
         {
-            return await _context.Items
-                .FirstOrDefaultAsync(i => i.ProductId == productId, ct);
+            return await _context.Set<InventoryItem>()
+                    .FirstOrDefaultAsync(
+                        i => i.ProductId == productId, ct);
         }
 
         public async Task<InventoryItem> AddAsync(InventoryItem inventoryItem, CancellationToken ct = default)

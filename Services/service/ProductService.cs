@@ -66,15 +66,6 @@ namespace Services.service
 
             await _unitOfWork.BeginTransactionAsync();
 
-            var file = new Product
-            {
-                Id = dto.Id.Value,
-                Name = dto.Name,
-                Barcode = dto.Barcode,
-                Price = dto.Price.Value,
-                Description = dto.Description,
-            };
-
             var newProduct= await _unitOfWork.ProductRepository.GetByIdAsync(dto.Id.Value);
             newProduct.Name = dto.Name ?? newProduct.Name;
             newProduct.Barcode = dto.Barcode ?? newProduct.Barcode;
@@ -125,8 +116,8 @@ namespace Services.service
 
         public async Task<IReadOnlyList<Product>> SearchAsync(string query, CancellationToken ct = default)
         {
-            if (string.IsNullOrWhiteSpace(query))
-                return Array.Empty<Product>();
+            //if (string.IsNullOrWhiteSpace(query))
+            //    return Array.Empty<Product>();
 
             var q = query.Trim();
 

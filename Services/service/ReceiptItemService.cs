@@ -29,7 +29,7 @@ namespace Services.service
                     ?? throw new ArgumentNullException(nameof(receiptId), "Прихода (Receipt) с таким id нет");
 
                 var existingItem = receipt.Items
-                    .FirstOrDefault(i => i.Product.Barcode == barcode);
+                                .FirstOrDefault(i => i.ProductId == product.Id);
 
                 if (existingItem == null)
                 {

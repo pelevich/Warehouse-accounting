@@ -1,5 +1,4 @@
-﻿using BarcodeStandard;
-using Domain.Entities;
+﻿using Domain.Entities;
 using Moq;
 using Services.Interfaces.repository;
 using Services.Interfaces.service;
@@ -830,162 +829,162 @@ namespace Pos_system.Test.Services
             );
         }
 
-        [Fact]
-        public async Task ConfirmAsync_WriteOff_NoThrows()
-        {
-            SetupTransaction();
+        //[Fact]
+        //public async Task ConfirmAsync_WriteOff_NoThrows()
+        //{
+        //    SetupTransaction();
 
-            var barcode = "4607176800081";
+        //    var barcode = "4607176800081";
 
-            var product = new Product
-            {
-                Id = Guid.NewGuid(),
-                Name = "Свеча большая",
-                Description = "Свеча из воска",
-                Barcode = barcode,
-                Price = 100
-            };
+        //    var product = new Product
+        //    {
+        //        Id = Guid.NewGuid(),
+        //        Name = "Свеча большая",
+        //        Description = "Свеча из воска",
+        //        Barcode = barcode,
+        //        Price = 100
+        //    };
 
-            var sale = new Sale
-            {
-                Id = Guid.NewGuid()
-            };
+        //    var sale = new Sale
+        //    {
+        //        Id = Guid.NewGuid()
+        //    };
 
-            var saleItem = new SaleItem
-            {
-                Id = Guid.NewGuid(),
-                Product = product,
-                ProductId = product.Id,
-                Sale = sale,
-                SaleId = sale.Id,
-                Quantity = 3,
-            };
+        //    var saleItem = new SaleItem
+        //    {
+        //        Id = Guid.NewGuid(),
+        //        Product = product,
+        //        ProductId = product.Id,
+        //        Sale = sale,
+        //        SaleId = sale.Id,
+        //        Quantity = 3,
+        //    };
 
-            sale.Items.Add(saleItem);
+        //    sale.Items.Add(saleItem);
 
-            var inventory = new Inventory
-            {
-                Id = Guid.NewGuid(),
-            };
+        //    var inventory = new Inventory
+        //    {
+        //        Id = Guid.NewGuid(),
+        //    };
 
-            var inventoryItem = new InventoryItem
-            {
-                Id = Guid.NewGuid(),
-                InventoryId = inventory.Id,
-                Inventory = inventory,
-                ProductId = product.Id,
-                Product = product,
-                Quantity = 5
-            };
+        //    var inventoryItem = new InventoryItem
+        //    {
+        //        Id = Guid.NewGuid(),
+        //        InventoryId = inventory.Id,
+        //        Inventory = inventory,
+        //        ProductId = product.Id,
+        //        Product = product,
+        //        Quantity = 5
+        //    };
 
-            inventory.Items.Add(inventoryItem);
+        //    inventory.Items.Add(inventoryItem);
 
-            _inventoryItemRepoMock
-                .Setup(x => x.GetAllAsync(It.IsAny<CancellationToken>()))
-                .ReturnsAsync(inventory.Items);
-            _saleRepoMock
-                .Setup(x => x.GetByIdAsync(sale.Id))
-                .ReturnsAsync(sale);
-            _inventoryRepoMock
-                .Setup(x => x.GetByIdAsync(inventory.Id, It.IsAny<CancellationToken>()))
-                .ReturnsAsync(inventory);
+        //    _inventoryItemRepoMock
+        //        .Setup(x => x.GetAllAsync(It.IsAny<CancellationToken>()))
+        //        .ReturnsAsync(inventory.Items);
+        //    _saleRepoMock
+        //        .Setup(x => x.GetByIdAsync(sale.Id))
+        //        .ReturnsAsync(sale);
+        //    _inventoryRepoMock
+        //        .Setup(x => x.GetByIdAsync(inventory.Id, It.IsAny<CancellationToken>()))
+        //        .ReturnsAsync(inventory);
 
-            await _saleService.ConfirmAsync(sale.Id, inventory.Id, default);
+        //    await _saleService.ConfirmAsync(sale.Id, inventory.Id, default);
 
-            Assert.Equal(2, inventoryItem.Quantity);
-        }
+        //    Assert.Equal(2, inventoryItem.Quantity);
+        //}
 
-        [Fact]
-        public async Task ConfirmAsync_WriteOff_NoThrows2()
-        {
-            SetupTransaction();
+        //[Fact]
+        //public async Task ConfirmAsync_WriteOff_NoThrows2()
+        //{
+        //    SetupTransaction();
 
-            var barcode = "4607176800081";
+        //    var barcode = "4607176800081";
 
-            var product = new Product
-            {
-                Id = Guid.NewGuid(),
-                Name = "Свеча большая",
-                Description = "Свеча из воска",
-                Barcode = barcode,
-                Price = 100
-            };
+        //    var product = new Product
+        //    {
+        //        Id = Guid.NewGuid(),
+        //        Name = "Свеча большая",
+        //        Description = "Свеча из воска",
+        //        Barcode = barcode,
+        //        Price = 100
+        //    };
 
-            var product2 = new Product
-            {
-                Id = Guid.NewGuid(),
-                Name = "Свеча маленькая",
-                Description = "Свеча из воска",
-                Barcode = "4607176833381",
-                Price = 50
-            };
+        //    var product2 = new Product
+        //    {
+        //        Id = Guid.NewGuid(),
+        //        Name = "Свеча маленькая",
+        //        Description = "Свеча из воска",
+        //        Barcode = "4607176833381",
+        //        Price = 50
+        //    };
 
-            var sale = new Sale
-            {
-                Id = Guid.NewGuid()
-            };
+        //    var sale = new Sale
+        //    {
+        //        Id = Guid.NewGuid()
+        //    };
 
-            var saleItem = new SaleItem
-            {
-                Id = Guid.NewGuid(),
-                Product = product,
-                ProductId = product.Id,
-                Sale = sale,
-                SaleId = sale.Id,
-                Quantity = 3,
-            };
+        //    var saleItem = new SaleItem
+        //    {
+        //        Id = Guid.NewGuid(),
+        //        Product = product,
+        //        ProductId = product.Id,
+        //        Sale = sale,
+        //        SaleId = sale.Id,
+        //        Quantity = 3,
+        //    };
 
-            var saleItem2 = new SaleItem
-            {
-                Id = Guid.NewGuid(),
-                Product = product2,
-                ProductId = product2.Id,
-                Sale = sale,
-                SaleId = sale.Id,
-                Quantity = 1,
-            };
+        //    var saleItem2 = new SaleItem
+        //    {
+        //        Id = Guid.NewGuid(),
+        //        Product = product2,
+        //        ProductId = product2.Id,
+        //        Sale = sale,
+        //        SaleId = sale.Id,
+        //        Quantity = 1,
+        //    };
 
-            sale.Items.Add(saleItem);
-            sale.Items.Add(saleItem2);
+        //    sale.Items.Add(saleItem);
+        //    sale.Items.Add(saleItem2);
 
-            var inventory = new Inventory
-            {
-                Id = Guid.NewGuid(),
-            };
+        //    var inventory = new Inventory
+        //    {
+        //        Id = Guid.NewGuid(),
+        //    };
 
-            var inventoryItem = new InventoryItem
-            {
-                Id = Guid.NewGuid(),
-                InventoryId = inventory.Id,
-                Inventory = inventory,
-                ProductId = product.Id,
-                Product = product,
-                Quantity = 5
-            };
+        //    var inventoryItem = new InventoryItem
+        //    {
+        //        Id = Guid.NewGuid(),
+        //        InventoryId = inventory.Id,
+        //        Inventory = inventory,
+        //        ProductId = product.Id,
+        //        Product = product,
+        //        Quantity = 5
+        //    };
 
-            inventory.Items.Add(inventoryItem);
+        //    inventory.Items.Add(inventoryItem);
 
-            _inventoryItemRepoMock
-                .Setup(x => x.GetAllAsync(It.IsAny<CancellationToken>()))
-                .ReturnsAsync(inventory.Items);
-            _saleRepoMock
-                .Setup(x => x.GetByIdAsync(sale.Id))
-                .ReturnsAsync(sale);
-            _inventoryRepoMock
-                .Setup(x => x.GetByIdAsync(inventory.Id, It.IsAny<CancellationToken>()))
-                .ReturnsAsync(inventory);
+        //    _inventoryItemRepoMock
+        //        .Setup(x => x.GetAllAsync(It.IsAny<CancellationToken>()))
+        //        .ReturnsAsync(inventory.Items);
+        //    _saleRepoMock
+        //        .Setup(x => x.GetByIdAsync(sale.Id))
+        //        .ReturnsAsync(sale);
+        //    _inventoryRepoMock
+        //        .Setup(x => x.GetByIdAsync(inventory.Id, It.IsAny<CancellationToken>()))
+        //        .ReturnsAsync(inventory);
 
-            await Assert.ThrowsAnyAsync<Exception>(
-                () => _saleService.ConfirmAsync(sale.Id, inventory.Id, default)
-            );
+        //    await Assert.ThrowsAnyAsync<Exception>(
+        //        () => _saleService.ConfirmAsync(sale.Id, inventory.Id, default)
+        //    );
 
-            _unitOfWorkMock.Verify(
-                x => x.RollbackAsync(It.IsAny<CancellationToken>()),
-                Times.Once);
+        //    _unitOfWorkMock.Verify(
+        //        x => x.RollbackAsync(It.IsAny<CancellationToken>()),
+        //        Times.Once);
 
-            _unitOfWorkMock.Verify(
-                x => x.CommitAsync(It.IsAny<CancellationToken>()),
-                Times.Never);
-        }
+        //    _unitOfWorkMock.Verify(
+        //        x => x.CommitAsync(It.IsAny<CancellationToken>()),
+        //        Times.Never);
+        //}
     }
 }

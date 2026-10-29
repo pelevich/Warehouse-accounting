@@ -1,0 +1,184 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<toolkit:Popup xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+               xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+               xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+               xmlns:vm="clr-namespace:App.ViewModels.Popups"
+               x:Class="App.Views.Popups.AddProductPopup"
+               x:DataType="vm:AddProductViewModel">
+
+    <!-- Компактная форма без прокрутки -->
+    <Border WidthRequest="570"
+            BackgroundColor="#F7F9F8"
+            Stroke="#DDE8E1"
+            StrokeThickness="1"
+            StrokeShape="RoundRectangle 22">
+
+        <Grid Padding="26,22,26,22"
+              RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto"
+              RowSpacing="13">
+
+            <!-- Заголовок -->
+            <Grid Grid.Row="0" ColumnDefinitions="*,42" ColumnSpacing="12">
+                <VerticalStackLayout Spacing="3" VerticalOptions="Center">
+                    <Label Text="Новый товар"
+                           FontSize="24"
+                           FontAttributes="Bold"
+                           TextColor="#182C22" />
+                    <Label Text="Заполните данные для добавления в каталог"
+                           FontSize="12"
+                           TextColor="#718479" />
+                </VerticalStackLayout>
+                <Border Grid.Column="1"
+                        WidthRequest="42"
+                        HeightRequest="42"
+                        BackgroundColor="#E8EFEB"
+                        StrokeThickness="0"
+                        StrokeShape="RoundRectangle 12"
+                        HorizontalOptions="Center"
+                        VerticalOptions="Center">
+                    <Border.GestureRecognizers>
+                        <TapGestureRecognizer Command="{Binding CloseCommand}" />
+                    </Border.GestureRecognizers>
+                    <Grid>
+                        <Label Text="×"
+                               FontSize="26"
+                               TextColor="#526A5B"
+                               HorizontalOptions="Center"
+                               VerticalOptions="Center"
+                               HorizontalTextAlignment="Center"
+                               VerticalTextAlignment="Center"
+                               InputTransparent="True" />
+                    </Grid>
+                </Border>
+            </Grid>
+
+            <!-- Название -->
+            <VerticalStackLayout Grid.Row="1" Spacing="5">
+                <Label Text="Название товара"
+                       FontSize="13" FontAttributes="Bold" TextColor="#354C3E" />
+                <Border BackgroundColor="White" Stroke="#DCE5DF"
+                        StrokeThickness="1" StrokeShape="RoundRectangle 12"
+                        Padding="12,0">
+                    <Entry Text="{Binding Name}"
+                           Placeholder="Например, свеча восковая"
+                           PlaceholderColor="#9AA9A0"
+                           TextColor="#1C3025"
+                           FontSize="14"
+                           HeightRequest="43"
+                           BackgroundColor="Transparent"
+                           ClearButtonVisibility="WhileEditing" />
+                </Border>
+                <Label Text="{Binding NameError}" TextColor="#CB4545" FontSize="11" />
+            </VerticalStackLayout>
+
+            <!-- Цена -->
+            <VerticalStackLayout Grid.Row="2" Spacing="5">
+                <Label Text="Цена, ₽"
+                       FontSize="13" FontAttributes="Bold" TextColor="#354C3E" />
+                <Border BackgroundColor="White" Stroke="#DCE5DF"
+                        StrokeThickness="1" StrokeShape="RoundRectangle 12"
+                        Padding="12,0">
+                    <Entry Text="{Binding Price}"
+                           Placeholder="0,00"
+                           PlaceholderColor="#9AA9A0"
+                           TextColor="#1C3025"
+                           FontSize="14"
+                           HeightRequest="43"
+                           Keyboard="Numeric"
+                           BackgroundColor="Transparent" />
+                </Border>
+                <Label Text="{Binding PriceError}" TextColor="#CB4545" FontSize="11" />
+            </VerticalStackLayout>
+
+            <!-- Штрихкод -->
+            <VerticalStackLayout Grid.Row="3" Spacing="5">
+                <Label Text="Штрихкод"
+                       FontSize="13" FontAttributes="Bold" TextColor="#354C3E" />
+                <Grid ColumnDefinitions="*,44" ColumnSpacing="10">
+                    <Border Grid.Column="0"
+                            BackgroundColor="White" Stroke="#DCE5DF"
+                            StrokeThickness="1" StrokeShape="RoundRectangle 12"
+                            Padding="12,0">
+                        <Entry Text="{Binding Barcode}"
+                               Placeholder="13 цифр"
+                               PlaceholderColor="#9AA9A0"
+                               TextColor="#1C3025"
+                               FontSize="14"
+                               HeightRequest="43"
+                               Keyboard="Numeric"
+                               BackgroundColor="Transparent" />
+                    </Border>
+                    <!-- Label в Grid гарантирует центрирование символа -->
+                    <Border Grid.Column="1"
+                            WidthRequest="44"
+                            HeightRequest="44"
+                            BackgroundColor="#E2F0E7"
+                            StrokeThickness="0"
+                            StrokeShape="RoundRectangle 12"
+                            VerticalOptions="Center">
+                        <Border.GestureRecognizers>
+                            <TapGestureRecognizer Command="{Binding GenerateBarcodeCommand}" />
+                        </Border.GestureRecognizers>
+                        <Grid>
+                            <Label Text="↻"
+                                   FontSize="25"
+                                   Padding="0,2,0,0"
+                                   FontAttributes="Bold"
+                                   TextColor="#27804B"
+                                   HorizontalOptions="Center"
+                                   VerticalOptions="Start"
+                                   HorizontalTextAlignment="Center"
+                                   VerticalTextAlignment="Center"
+                                   InputTransparent="True" />
+                        </Grid>
+                    </Border>
+                </Grid>
+                <Label Text="Нажмите ↻, чтобы сгенерировать штрихкод"
+                       FontSize="11" TextColor="#87988D" />
+                <Label Text="{Binding BarcodeError}" TextColor="#CB4545" FontSize="11" />
+            </VerticalStackLayout>
+
+            <!-- Описание -->
+            <VerticalStackLayout Grid.Row="4" Spacing="5">
+                <Label Text="Описание"
+                       FontSize="13" FontAttributes="Bold" TextColor="#354C3E" />
+                <Border BackgroundColor="White" Stroke="#DCE5DF"
+                        StrokeThickness="1" StrokeShape="RoundRectangle 12"
+                        Padding="12,4">
+                    <Editor Text="{Binding Description}"
+                            Placeholder="Краткое описание товара"
+                            PlaceholderColor="#9AA9A0"
+                            TextColor="#1C3025"
+                            FontSize="14"
+                            AutoSize="Disabled"
+                            HeightRequest="64"
+                            BackgroundColor="Transparent" />
+                </Border>
+                <Label Text="{Binding DescriptionError}" TextColor="#CB4545" FontSize="11" />
+            </VerticalStackLayout>
+
+            <!-- Действия -->
+            <Grid Grid.Row="5" ColumnDefinitions="*,*" ColumnSpacing="12"
+                  Margin="0,3,0,0">
+                <Button Grid.Column="0"
+                        Text="Отмена"
+                        Command="{Binding CloseCommand}"
+                        BackgroundColor="#EDF1EE"
+                        TextColor="#43594B"
+                        FontSize="14"
+                        FontAttributes="Bold"
+                        CornerRadius="12"
+                        HeightRequest="46" />
+                <Button Grid.Column="1"
+                        Text="Добавить товар"
+                        Command="{Binding SaveCommand}"
+                        BackgroundColor="#269B58"
+                        TextColor="White"
+                        FontSize="14"
+                        FontAttributes="Bold"
+                        CornerRadius="12"
+                        HeightRequest="46" />
+            </Grid>
+        </Grid>
+    </Border>
+</toolkit:Popup>

@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<toolkit:Popup xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+               xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+               xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+               xmlns:vm="clr-namespace:App.ViewModels.Popups"
+               xmlns:model="clr-namespace:App.Model.Warehouse"
+               x:Class="App.Views.Popups.AddReceiptItemPopup"
+               x:DataType="vm:AddReceiptItemViewModel">
+
+    <Border WidthRequest="590"
+            BackgroundColor="#F8FAFC"
+            Stroke="#DFE6ED"
+            StrokeThickness="1"
+            StrokeShape="RoundRectangle 20"
+            Padding="0">
+        <Grid RowDefinitions="Auto,*,Auto" RowSpacing="0">
+
+            <!-- Шапка -->
+            <Grid Grid.Row="0" Padding="26,23,26,20"
+                  ColumnDefinitions="*,Auto" BackgroundColor="#FFFFFF">
+                <VerticalStackLayout Spacing="5">
+                    <Label Text="Новый товар в приходе"
+                           FontSize="23" FontAttributes="Bold"
+                           TextColor="#17212E" />
+                    
+                </VerticalStackLayout>
+                <Border Grid.Column="1" BackgroundColor="#EAF6EE"
+                        StrokeThickness="0" StrokeShape="RoundRectangle 12"
+                        Padding="13,9" VerticalOptions="Center">
+                    <Label Text="ПРИХОД" TextColor="#25834B"
+                           FontSize="11" FontAttributes="Bold" />
+                </Border>
+            </Grid>
+
+            <ScrollView Grid.Row="1" MaximumHeightRequest="525">
+                <VerticalStackLayout Padding="26,22,26,24" Spacing="17">
+
+                    <!-- Название -->
+                    <VerticalStackLayout Spacing="4">
+                        <Label Text="Название товара" TextColor="#344256"
+                               FontSize="13" FontAttributes="Bold" />
+                        <Border BackgroundColor="White" Stroke="#DCE3EA"
+                                StrokeThickness="1" StrokeShape="RoundRectangle 10"
+                                Padding="12,0">
+                            <Entry Text="{Binding NameText, Mode=TwoWay}"
+                                   Placeholder="Введите название для поиска"
+                                   PlaceholderColor="#9AA5B1"
+                                   TextColor="#17212E" FontSize="14"
+                                   BackgroundColor="Transparent" HeightRequest="45"
+                                   ClearButtonVisibility="WhileEditing" />
+                        </Border>
+                        <Label Text="{Binding NameError}" TextColor="#C84646"
+                               FontSize="11" />
+                    </VerticalStackLayout>
+
+                    <!-- Подсказки сразу под поиском -->
+                    <Border IsVisible="{Binding HasSuggestions}"
+                            BackgroundColor="White" Stroke="#D8E4DB"
+                            StrokeThickness="1" StrokeShape="RoundRectangle 12"
+                            Padding="8">
+                        <VerticalStackLayout Spacing="6">
+                            <Label Text="РЕЗУЛЬТАТЫ ПОИСКА" FontSize="11"
+                                   FontAttributes="Bold" TextColor="#5F806B"
+                                   Padding="8,5" />
+                            <CollectionView ItemsSource="{Binding Suggestions}"
+                                            SelectionMode="Single"
+                                            HeightRequest="154"
+                                            SelectionChangedCommand="{Binding SelectSuggestionCommand}"
+                                            SelectionChangedCommandParameter="{Binding SelectedItem, Source={RelativeSource Self}}">
+                                <CollectionView.ItemTemplate>
+                                    <DataTemplate x:DataType="model:ProductSuggestion">
+                                        <Grid Padding="10,10" ColumnDefinitions="*,Auto"
+                                              ColumnSpacing="12">
+                                            <VerticalStackLayout Spacing="3">
+                                                <Label Text="{Binding Name}" TextColor="#243142"
+                                                       FontSize="13" FontAttributes="Bold"
+                                                       LineBreakMode="TailTruncation" />
+                                                <Label Text="{Binding Barcode}" TextColor="#83909C"
+                                                       FontSize="11" />
+                                            </VerticalStackLayout>
+                                            <Label Grid.Column="1" VerticalOptions="Center"
+                                                   Text="{Binding Price, StringFormat='{0:N2} ₽'}"
+                                                   TextColor="#25834B" FontSize="13"
+                                                   FontAttributes="Bold" />
+                                        </Grid>
+                                    </DataTemplate>
+                                </CollectionView.ItemTemplate>
+                            </CollectionView>
+                        </VerticalStackLayout>
+                    </Border>
+
+                    <!-- Штрихкод -->
+                    <VerticalStackLayout Spacing="4">
+                        <Label Text="Штрихкод" TextColor="#344256"
+                               FontSize="13" FontAttributes="Bold" />
+                        <Border BackgroundColor="White" Stroke="#DCE3EA"
+                                StrokeThickness="1" StrokeShape="RoundRectangle 10"
+                                Padding="12,0">
+                            <Entry Text="{Binding BarcodeText, Mode=TwoWay}"
+                                   Placeholder="13 цифр или сканирование"
+                                   PlaceholderColor="#9AA5B1"
+                                   Keyboard="Numeric" TextColor="#17212E"
+                                   FontSize="14" BackgroundColor="Transparent"
+                                   HeightRequest="45" />
+                        </Border>
+                        <Label Text="{Binding BarcodeError}" TextColor="#C84646"
+                               FontSize="11" />
+                    </VerticalStackLayout>
+
+                    <!-- Описание -->
+                    <VerticalStackLayout Spacing="4">
+                        <Label Text="Описание" TextColor="#344256"
+                               FontSize="13" FontAttributes="Bold" />
+                        <Border BackgroundColor="White" Stroke="#DCE3EA"
+                                StrokeThickness="1" StrokeShape="RoundRectangle 10"
+                                Padding="12,4">
+                            <Editor Text="{Binding Description, Mode=TwoWay}"
+                                    Placeholder="(Не обязательное поле)"
+                                    PlaceholderColor="#9AA5B1"
+                                    TextColor="#17212E" FontSize="13"
+                                    HeightRequest="64" BackgroundColor="Transparent" />
+                        </Border>
+                        <Label Text="{Binding DescriptionError}" TextColor="#C84646"
+                               FontSize="11" />
+                    </VerticalStackLayout>
+
+                    <!-- Количество и цена -->
+                    <Grid ColumnDefinitions="*,*" ColumnSpacing="14">
+                        <VerticalStackLayout Grid.Column="0" Spacing="4">
+                            <Label Text="Количество" TextColor="#344256"
+                                   FontSize="13" FontAttributes="Bold" />
+                            <Border BackgroundColor="White" Stroke="#DCE3EA"
+                                    StrokeThickness="1" StrokeShape="RoundRectangle 10"
+                                    Padding="12,0">
+                                <Entry Text="{Binding Quantity, Mode=TwoWay}"
+                                       Keyboard="Numeric" Placeholder="1"
+                                       TextColor="#17212E" FontSize="14"
+                                       BackgroundColor="Transparent"
+                                       HeightRequest="45" />
+                            </Border>
+                            <Label Text="{Binding QuantityError}" TextColor="#C84646"
+                                   FontSize="11" />
+                        </VerticalStackLayout>
+                        <VerticalStackLayout Grid.Column="1" Spacing="4">
+                            <Label Text="Цена за единицу" TextColor="#344256"
+                                   FontSize="13" FontAttributes="Bold" />
+                            <Border BackgroundColor="#EEF5F0" Stroke="#D6E8DB"
+                                    StrokeThickness="1" StrokeShape="RoundRectangle 10"
+                                    Padding="14,0" HeightRequest="47">
+                                <Label Text="{Binding Price, StringFormat='{0:N2} ₽'}"
+                                       VerticalOptions="Center" TextColor="#267B48"
+                                       FontSize="15" FontAttributes="Bold" />
+                            </Border>
+                            <Label Text="{Binding PriceError}" TextColor="#C84646"
+                                   FontSize="11" />
+                        </VerticalStackLayout>
+                    </Grid>
+                </VerticalStackLayout>
+            </ScrollView>
+
+            <!-- Действия -->
+            <Grid Grid.Row="2" Padding="26,18" BackgroundColor="White"
+                  ColumnDefinitions="*,*" ColumnSpacing="12">
+                <Button Grid.Column="0" Text="Отмена"
+                        Command="{Binding CloseCommand}"
+                        BackgroundColor="#EDF1F5" TextColor="#526173"
+                        FontSize="14" FontAttributes="Bold"
+                        CornerRadius="11" HeightRequest="48" />
+                <Button Grid.Column="1" Text="+  Добавить товар"
+                        Command="{Binding AddCommand}"
+                        BackgroundColor="#278C50" TextColor="White"
+                        FontSize="14" FontAttributes="Bold"
+                        CornerRadius="11" HeightRequest="48" />
+            </Grid>
+        </Grid>
+    </Border>
+</toolkit:Popup>

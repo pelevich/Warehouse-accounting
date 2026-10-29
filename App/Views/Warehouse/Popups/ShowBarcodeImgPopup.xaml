@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<toolkit:Popup
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+    xmlns:vm="clr-namespace:App.ViewModels.Warehouse.Popups"
+    x:Class="App.Views.Popups.ShowBarcodeImgPopup"
+    x:DataType="vm:ShowBarcodeImgViewModel">
+
+    <Border
+        WidthRequest="460"
+        BackgroundColor="#F7F9F8"
+        Stroke="#DDE8E1"
+        StrokeThickness="1"
+        StrokeShape="RoundRectangle 20"
+        Padding="24">
+
+        <VerticalStackLayout Spacing="18">
+
+            <!-- Заголовок -->
+            <Grid ColumnDefinitions="*,42">
+
+                <VerticalStackLayout
+                    Spacing="4"
+                    VerticalOptions="Center">
+
+                    <Label
+                        Text="Штрихкод товара"
+                        FontSize="22"
+                        FontAttributes="Bold"
+                        TextColor="#182C22" />
+
+                    <Label
+                        Text="Просмотр и сохранение изображения"
+                        FontSize="12"
+                        TextColor="#718479" />
+
+                </VerticalStackLayout>
+
+                <Border
+                    Grid.Column="1"
+                    WidthRequest="42"
+                    HeightRequest="42"
+                    BackgroundColor="#E8EFEB"
+                    StrokeThickness="0"
+                    StrokeShape="RoundRectangle 12">
+
+                    <Border.GestureRecognizers>
+                        <TapGestureRecognizer
+                            Command="{Binding CloseCommand}" />
+                    </Border.GestureRecognizers>
+
+                    <Label
+                        Text="×"
+                        FontSize="26"
+                        TextColor="#526A5B"
+                        HorizontalOptions="Center"
+                        VerticalOptions="Center"
+                        InputTransparent="True" />
+
+                </Border>
+
+            </Grid>
+
+            <!-- Изображение -->
+            <Border
+                BackgroundColor="White"
+                Stroke="#DCE5DF"
+                StrokeThickness="1"
+                StrokeShape="RoundRectangle 12"
+                Padding="18">
+
+                <Image
+                    Source="{Binding BarcodeImage}"
+                    HeightRequest="140"
+                    Aspect="AspectFit"
+                    HorizontalOptions="Fill" />
+
+            </Border>
+
+            <!-- Кнопки -->
+            <Grid
+                ColumnDefinitions="*,*"
+                ColumnSpacing="12">
+
+                <Button
+                    Grid.Column="0"
+                    Text="Закрыть"
+                    Command="{Binding CloseCommand}"
+                    BackgroundColor="#EDF1EE"
+                    TextColor="#43594B"
+                    CornerRadius="12"
+                    HeightRequest="46" />
+
+                <Button
+                    Grid.Column="1"
+                    Text="Сохранить PNG"
+                    Command="{Binding SaveBarcodeImageCommand}"
+                    BackgroundColor="#269B58"
+                    TextColor="White"
+                    FontAttributes="Bold"
+                    CornerRadius="12"
+                    HeightRequest="46" />
+
+            </Grid>
+
+        </VerticalStackLayout>
+
+    </Border>
+
+</toolkit:Popup>

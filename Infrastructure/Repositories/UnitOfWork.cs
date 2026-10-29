@@ -17,6 +17,8 @@ namespace Infrastructure.Repositories
         private IReceiptItemRepository _receiptItemRepository;
         private ISaleRepository _saleRepository;
         private ISaleItemRepository _saleItemRepository;
+        private IWorkShiftRepository _workShiftRepository;
+        private IEmployeeRepository _employeeRepository;
 
         private IDbContextTransaction _currentTransaction;
         private readonly ILogger<UnitOfWork> _logger;
@@ -52,6 +54,12 @@ namespace Infrastructure.Repositories
 
         public ISaleItemRepository SaleItemRepository
             => _saleItemRepository ??= new SaleItemRepository(_context);
+
+        public IWorkShiftRepository WorkShiftRepository
+            => _workShiftRepository ??= new WorkShiftRepository(_context);
+
+        public IEmployeeRepository EmployeeRepository
+            => _employeeRepository ??= new EmployeeRepository(_context);
 
         public async Task BeginTransactionAsync(CancellationToken ct = default)
         {

@@ -5,10 +5,26 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:local="clr-namespace:App"
     xmlns:views="clr-namespace:App.Views"
-    Title="App">
+    Title="App"
+    Shell.NavBarIsVisible="False">
 
     <ShellContent
+        Title="Начало работы"
+        Route="WelcomePage"
+        ContentTemplate="{DataTemplate views:WelcomePage}" />
+    
+    <ShellContent
         ContentTemplate="{DataTemplate views:WarehousePage}"
-        Route="MainPage" />
+        Route="WarehousePage" />
+
+    <ShellContent
+        Title="Продажа"
+        ContentTemplate="{DataTemplate views:SalePage}"
+        Route="SalePage" />
+
+    <ShellContent
+        Title="Продажа"
+        ContentTemplate="{DataTemplate views:HistoryPage}"
+        Route="HistoryPage" />
 
 </Shell>

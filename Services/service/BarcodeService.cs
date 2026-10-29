@@ -2,6 +2,7 @@
 using Services.Interfaces.repository;
 using Services.Interfaces.service;
 using SkiaSharp;
+using System.Diagnostics;
 
 namespace Services.service
 {
@@ -49,12 +50,19 @@ namespace Services.service
             return code;
         }
 
-        public async Task<SKImage> GenerateBarcodeCodeImg(string code)
+        public SKImage GenerateBarcodeCodeImg(string code)
         {
-            var b = new Barcode();
-            b.IncludeLabel = true;
-            var img = b.Encode(BarcodeStandard.Type.Jan13, code);
-            return img;
+            var barcode = new Barcode
+            {
+                IncludeLabel = true
+            };
+
+            var image = barcode.Encode(
+                BarcodeStandard.Type.Ean13,
+                code
+            );
+
+            return image;
         }
 
         public async Task<bool> ValideCode(string code)
