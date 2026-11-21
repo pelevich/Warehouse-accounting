@@ -10,6 +10,7 @@ using CommunityToolkit.Maui;
 using CommunityToolkit.Mvvm.Messaging;
 using Infrastructure.Data;
 using Infrastructure.Repositories;
+using Infrastructure.Reports;
 using Infrastructure.Startup;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
@@ -92,6 +93,7 @@ namespace App
             builder.Services.AddTransient<IProductCatalogService, ProductCatalogService>();
             builder.Services.AddTransient<IWorkShiftService, WorkShiftService>();
             builder.Services.AddTransient<IHistoryService, HistoryService>();
+            builder.Services.AddTransient<IInventoryReportService, InventoryReportService>();
 
             //Scoped
             builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
@@ -99,6 +101,8 @@ namespace App
             builder.Services.AddScoped<IEmployeeService, EmployeeService>();
 
             builder.Services.AddSingleton<IMessenger>(WeakReferenceMessenger.Default);
+
+            QuestPDF.Settings.UseSystemFonts = true; //Используем системные шрифты в генераторе отчета
 
             //БД (пока sqlite потом может перейдем на postgress)
             var dbPath = Path.Combine(FileSystem.AppDataDirectory, "pos.db");

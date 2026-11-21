@@ -9,7 +9,7 @@ namespace Services.service
         private IUnitOfWork _unitOfWork;
         private readonly ISessionService _session;
 
-        public SaleService(IUnitOfWork unitOfWork, ISessionService session) 
+        public SaleService(IUnitOfWork unitOfWork, ISessionService session)
         {
             _unitOfWork = unitOfWork;
             _session = session;

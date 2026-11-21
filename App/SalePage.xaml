@@ -63,10 +63,10 @@
                 </Border>
             </HorizontalStackLayout>
 
-            <!-- ОБЛАСТЬ КОНТЕНТА -->
+            <!-- Дополнительные отступы выравнивают экран продажи со страницами склада -->
             <ContentView Grid.Row="1"
-                Content="{Binding CurrentView}">
-            </ContentView>
+                         Margin="12,16,12,0"
+                         Content="{Binding CurrentView}" />
         </Grid>
     </Grid>
 

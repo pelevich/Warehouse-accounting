@@ -38,9 +38,11 @@ public sealed class WorkShiftRepository : IWorkShiftRepository
             .AsSplitQuery()
             .Include(s => s.Employee)
             .Include(s => s.Sales)
-                .ThenInclude(s => s.Items)
+                .ThenInclude(sale => sale.Items)
+                    .ThenInclude(item => item.Product)
             .Include(s => s.Receipts)
-                .ThenInclude(r => r.Items)
+                .ThenInclude(receipt => receipt.Items)
+                    .ThenInclude(item => item.Product)
             .SingleOrDefaultAsync(s => s.Id == id, ct);
     }
 

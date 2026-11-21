@@ -7,6 +7,11 @@ public sealed class HistoryLineDto
     public string ProductName { get; init; } = "";
     public string Barcode { get; init; } = "";
     public int Quantity { get; init; }
+
+    // Для продаж цена берётся из Product.Price.
+    // Для приходов цена не заполнена: в текущей модели закупочная цена не хранится.
+    public decimal? UnitPrice { get; init; }
+    public decimal? LineAmount { get; init; }
 }
 
 public sealed class HistoryRecordDto

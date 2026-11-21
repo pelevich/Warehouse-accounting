@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
 		<TargetFrameworks>net10.0-android</TargetFrameworks>
@@ -85,6 +85,12 @@
 	  <Compile Update="Views\Warehouse\Popups\AddReceiptItemPopup.xaml.cs">
 	    <DependentUpon>AddReceiptItemPopup.xaml</DependentUpon>
 	  </Compile>
+	</ItemGroup>
+
+	<ItemGroup>
+		<None Update="QuestPDFFonts\NotoSans-Regular.ttf" CopyToOutputDirectory="PreserveNewest" />
+
+		<None Update="QuestPDFFonts\NotoSans-Bold.ttf" CopyToOutputDirectory="PreserveNewest" />
 	</ItemGroup>
 
 	<ItemGroup>

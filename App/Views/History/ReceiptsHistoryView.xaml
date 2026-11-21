@@ -3,6 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:vm="clr-namespace:App.ViewModels.Tabs"
              xmlns:dto="clr-namespace:Services.DTO;assembly=Services"
+             xmlns:shapes="clr-namespace:Microsoft.Maui.Controls.Shapes;assembly=Microsoft.Maui.Controls"
              x:Class="App.Views.ReceiptsHistoryView"
              x:DataType="vm:ReceiptsHistoryViewModel"
              BackgroundColor="#1F1F1F">
@@ -94,16 +95,19 @@
             <CollectionView ItemsSource="{Binding Records}"
                             SelectionMode="None"
                             VerticalScrollBarVisibility="Always">
+                <CollectionView.ItemsLayout>
+                    <LinearItemsLayout Orientation="Vertical" ItemSpacing="5" />
+                </CollectionView.ItemsLayout>
                 <CollectionView.ItemTemplate>
                     <DataTemplate x:DataType="vm:HistoryRow">
                         <Border BackgroundColor="#272727"
                                 Stroke="#3D3D3D" StrokeThickness="1"
                                 StrokeShape="RoundRectangle 12"
-                                Margin="0,0,0,10">
+                                Margin="0">
                             <VerticalStackLayout Spacing="0">
                                 <Grid Padding="20,15"
-                                      ColumnDefinitions="*,Auto"
-                                      ColumnSpacing="16">
+                                      ColumnDefinitions="*,64"
+                                      ColumnSpacing="12">
                                     <Grid.GestureRecognizers>
                                         <TapGestureRecognizer Command="{Binding ToggleCommand}"/>
                                     </Grid.GestureRecognizers>
@@ -121,12 +125,30 @@
                                                FontSize="13"/>
                                     </VerticalStackLayout>
 
-                                    <Border Grid.Column="1" WidthRequest="38" HeightRequest="38"
-                                            BackgroundColor="#36313D" Stroke="#65557A"
-                                            StrokeShape="RoundRectangle 19" VerticalOptions="Center">
-                                        <Label Text="{Binding Arrow}" FontSize="22" FontAttributes="Bold"
-                                               TextColor="#D4C3FF" HorizontalTextAlignment="Center"
-                                               VerticalTextAlignment="Center" InputTransparent="True"/>
+                                    <Border Grid.Column="1"
+                                            WidthRequest="42" HeightRequest="42"
+                                            BackgroundColor="#36313D"
+                                            Stroke="#65557A" StrokeThickness="1"
+                                            StrokeShape="RoundRectangle 21"
+                                            HorizontalOptions="Center"
+                                            VerticalOptions="Center"
+                                            InputTransparent="True">
+                                        <shapes:Path Data="M 4,5 L 10,11 L 16,5"
+                                                     WidthRequest="20" HeightRequest="14"
+                                                     Stroke="#D4C3FF"
+                                                     StrokeThickness="2.2"
+                                                     StrokeLineCap="Round"
+                                                     StrokeLineJoin="Round"
+                                                     HorizontalOptions="Center"
+                                                     VerticalOptions="Center">
+                                            <shapes:Path.Triggers>
+                                                <DataTrigger TargetType="shapes:Path"
+                                                             Binding="{Binding IsExpanded}"
+                                                             Value="True">
+                                                    <Setter Property="Rotation" Value="180" />
+                                                </DataTrigger>
+                                            </shapes:Path.Triggers>
+                                        </shapes:Path>
                                     </Border>
                                 </Grid>
 

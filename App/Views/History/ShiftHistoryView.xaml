@@ -2,79 +2,325 @@
 <ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:vm="clr-namespace:App.ViewModels.Tabs"
-             x:DataType="vm:ShiftHistoryViewModel"
+             xmlns:shapes="clr-namespace:Microsoft.Maui.Controls.Shapes;assembly=Microsoft.Maui.Controls"
              x:Class="App.Views.ShiftHistoryView"
+             x:DataType="vm:ShiftHistoryViewModel"
              BackgroundColor="#1F1F1F">
-    <Grid Padding="24,18,24,22" RowDefinitions="Auto,Auto,Auto,*" RowSpacing="15">
-        <Grid Grid.Row="0" ColumnDefinitions="*,Auto">
-            <VerticalStackLayout Spacing="5">
-                <Label Text="История смен" TextColor="#F7F7F8" FontSize="25" FontAttributes="Bold"/>
-                <Label Text="Сотрудники, время работы, продажи и поступления" TextColor="#9999A3" FontSize="13"/>
-            </VerticalStackLayout>
-            <Button Grid.Column="1" Text="↻  Обновить" Command="{Binding LoadCommand}" BackgroundColor="#34313C"
-              TextColor="#D4C3FF" CornerRadius="10" Padding="20,0" HeightRequest="42"/>
-        </Grid>
-        <Border Grid.Row="1" BackgroundColor="#292929" Stroke="#3B3B3B" StrokeShape="RoundRectangle 14" Padding="18,14">
-            <Grid ColumnDefinitions="*,*,Auto" RowDefinitions="Auto,Auto" ColumnSpacing="13">
-                <VerticalStackLayout Grid.Column="0" Spacing="6">
-                    <Label Text="Сотрудник" TextColor="#AFAFB9" FontSize="12"/>
-                    <Picker ItemsSource="{Binding Employees}" SelectedItem="{Binding SelectedEmployee, Mode=TwoWay}" ItemDisplayBinding="{Binding Name}"
-                  BackgroundColor="#353535" TextColor="White"/>
-                </VerticalStackLayout>
-                <VerticalStackLayout Grid.Column="1" Spacing="6">
-                    <Label Text="Сортировка" TextColor="#AFAFB9" FontSize="12"/>
-                    <Picker ItemsSource="{Binding SortOptions}" SelectedItem="{Binding SelectedSort, Mode=TwoWay}" BackgroundColor="#353535" TextColor="White">
 
-                    </Picker>
-                </VerticalStackLayout>
-                <Button Grid.Column="2" Text="Сбросить" Command="{Binding ResetFiltersCommand}" VerticalOptions="End"
-                BackgroundColor="#38333F" TextColor="#CFC0F1" CornerRadius="10" Padding="16,0" HeightRequest="48"/>
-                <HorizontalStackLayout Grid.Row="1" Grid.ColumnSpan="3" Spacing="12" Margin="0,12,0,0">
-                    <CheckBox IsChecked="{Binding UseDateFilter, Mode=TwoWay}" Color="#AE98EA"/>
-                    <Label Text="Период" TextColor="#E7E7EC" VerticalOptions="Center"/>
-                    <DatePicker Date="{Binding DateFrom, Mode=TwoWay}" Format="dd.MM.yyyy" IsVisible="{Binding UseDateFilter}"
-                      BackgroundColor="#353535" TextColor="White"/>
-                    <DatePicker Date="{Binding DateTo, Mode=TwoWay}" Format="dd.MM.yyyy" IsVisible="{Binding UseDateFilter}"
-                      BackgroundColor="#353535" TextColor="White"/>
-                </HorizontalStackLayout>
-            </Grid>
-        </Border>
-        <Grid Grid.Row="2" ColumnDefinitions="*,Auto">
-            <Label Text="ИСТОРИЯ СМЕН" TextColor="#9B9BA6" FontAttributes="Bold" FontSize="12"/>
-            <Label Text="{Binding VisibleCount, StringFormat='Записей: {0}'}" Grid.Column="1" TextColor="#9B9BA6" FontSize="12"/>
+    <Grid Padding="24,18,24,22"
+          RowDefinitions="Auto,Auto,Auto,*,Auto"
+          RowSpacing="16">
+
+        <!-- Заголовок -->
+        <Grid Grid.Row="0" ColumnDefinitions="*,Auto" ColumnSpacing="12">
+            <VerticalStackLayout Spacing="5">
+                <Label Text="История смен"
+                       FontSize="25"
+                       FontAttributes="Bold"
+                       TextColor="#F7F7F8"/>
+                <Label Text="Сотрудники, время работы, продажи и поступления"
+                       FontSize="13"
+                       TextColor="#9999A3"/>
+            </VerticalStackLayout>
+
+            <Button Grid.Column="1"
+                    Text="↻  Обновить"
+                    Command="{Binding LoadCommand}"
+                    BackgroundColor="#34313C"
+                    TextColor="#D4C3FF"
+                    CornerRadius="10"
+                    HeightRequest="42"
+                    Padding="20,0"
+                    VerticalOptions="Center"/>
         </Grid>
-        <CollectionView ItemsSource="{Binding Records}" Grid.Row="3" SelectionMode="None" VerticalScrollBarVisibility="Always">
-            <CollectionView.ItemTemplate>
-                <DataTemplate x:DataType="vm:ShiftHistoryRow">
-                    <Border BackgroundColor="#272727" Stroke="#3D3D3D" StrokeShape="RoundRectangle 12" Margin="0,0,0,10">
-                        <VerticalStackLayout Spacing="0">
-                            <Grid Padding="20,15" ColumnDefinitions="*,Auto">
-                                <Grid.GestureRecognizers>
-                                    <TapGestureRecognizer Command="{Binding ToggleCommand}"/>
-                                </Grid.GestureRecognizers>
-                                <VerticalStackLayout Spacing="5">
-                                    <Label Text="{Binding DateText}" TextColor="#F4F4F6" FontSize="15" FontAttributes="Bold"/>
-                                    <Label Text="{Binding EmployeeName}" TextColor="#B7B7C1" FontSize="13"/>
-                                    <Label Text="{Binding Summary}" TextColor="#B8A3EE" FontSize="13"/>
+
+        <!-- Фильтры: оформление как в истории продаж и прихода -->
+        <Border Grid.Row="1"
+                BackgroundColor="#292929"
+                Stroke="#3B3B3B"
+                StrokeThickness="1"
+                StrokeShape="RoundRectangle 14"
+                Padding="18,16">
+
+            <VerticalStackLayout Spacing="13">
+                <Grid ColumnDefinitions="*,*,Auto" ColumnSpacing="14">
+
+                    <VerticalStackLayout Grid.Column="0" Spacing="6">
+                        <Label Text="Сотрудник"
+                               FontSize="12"
+                               TextColor="#AFAFB9"/>
+                        <Picker ItemsSource="{Binding Employees}"
+                                SelectedItem="{Binding SelectedEmployee, Mode=TwoWay}"
+                                ItemDisplayBinding="{Binding Name}"
+                                BackgroundColor="#353535"
+                                TextColor="White"
+                                TitleColor="#AFAFB9"/>
+                    </VerticalStackLayout>
+
+                    <VerticalStackLayout Grid.Column="1" Spacing="6">
+                        <Label Text="Сортировка"
+                               FontSize="12"
+                               TextColor="#AFAFB9"/>
+                        <Picker ItemsSource="{Binding SortOptions}"
+                                SelectedItem="{Binding SelectedSort, Mode=TwoWay}"
+                                BackgroundColor="#353535"
+                                TextColor="White"/>
+                    </VerticalStackLayout>
+
+                    <Button Grid.Column="2"
+                            Text="Сбросить"
+                            Command="{Binding ResetFiltersCommand}"
+                            BackgroundColor="#38333F"
+                            TextColor="#CFC0F1"
+                            CornerRadius="10"
+                            Padding="16,0"
+                            HeightRequest="48"
+                            VerticalOptions="End"/>
+                </Grid>
+
+                <Grid ColumnDefinitions="Auto,Auto,*,Auto"
+                      ColumnSpacing="16"
+                      VerticalOptions="Center">
+
+                    <HorizontalStackLayout Grid.Column="0" Spacing="6">
+                        <CheckBox IsChecked="{Binding UseDateFilter, Mode=TwoWay}"
+                                  Color="#AE98EA"/>
+                        <Label Text="Период"
+                               TextColor="#E7E7EC"
+                               FontSize="13"
+                               VerticalOptions="Center"/>
+                    </HorizontalStackLayout>
+
+                    <HorizontalStackLayout Grid.Column="1"
+                                           Spacing="8"
+                                           IsVisible="{Binding UseDateFilter}">
+                        <Label Text="С"
+                               TextColor="#BDBDC7"
+                               VerticalOptions="Center"/>
+                        <DatePicker Date="{Binding DateFrom, Mode=TwoWay}"
+                                    Format="dd.MM.yyyy"
+                                    BackgroundColor="#353535"
+                                    TextColor="White"/>
+                        <Label Text="По"
+                               TextColor="#BDBDC7"
+                               VerticalOptions="Center"/>
+                        <DatePicker Date="{Binding DateTo, Mode=TwoWay}"
+                                    Format="dd.MM.yyyy"
+                                    BackgroundColor="#353535"
+                                    TextColor="White"/>
+                    </HorizontalStackLayout>
+                </Grid>
+            </VerticalStackLayout>
+        </Border>
+
+        <!-- Заголовок списка -->
+        <Grid Grid.Row="2" ColumnDefinitions="*,Auto">
+            <Label Text="ИСТОРИЯ СМЕН"
+                   FontSize="12"
+                   FontAttributes="Bold"
+                   TextColor="#9B9BA6"
+                   CharacterSpacing="1"
+                   VerticalOptions="Center"/>
+
+            <Label Grid.Column="1"
+                   Text="{Binding VisibleCount, StringFormat='Записей: {0}'}"
+                   FontSize="12"
+                   TextColor="#9B9BA6"/>
+        </Grid>
+
+        <!-- Карточки смен -->
+        <Grid Grid.Row="3">
+            <CollectionView ItemsSource="{Binding Records}"
+                            SelectionMode="None"
+                            VerticalScrollBarVisibility="Always">
+
+                <CollectionView.ItemsLayout>
+                    <LinearItemsLayout Orientation="Vertical"
+                                        ItemSpacing="5"/>
+                </CollectionView.ItemsLayout>
+
+                <CollectionView.ItemTemplate>
+                    <DataTemplate x:DataType="vm:ShiftHistoryRow">
+
+                        <Border BackgroundColor="#272727"
+                                Stroke="#3D3D3D"
+                                StrokeThickness="1"
+                                StrokeShape="RoundRectangle 12"
+                                Margin="0">
+
+                            <VerticalStackLayout Spacing="0">
+
+                                <!-- Верхняя часть карточки -->
+                                <Grid Padding="20,15"
+                                      ColumnDefinitions="*,Auto,64"
+                                      ColumnSpacing="12">
+
+                                    <VerticalStackLayout Grid.Column="0"
+                                                         Spacing="6">
+                                        <VerticalStackLayout.GestureRecognizers>
+                                            <TapGestureRecognizer Command="{Binding ToggleCommand}"/>
+                                        </VerticalStackLayout.GestureRecognizers>
+
+                                        <Label Text="{Binding DateText}"
+                                               TextColor="#F4F4F6"
+                                               FontSize="15"
+                                               FontAttributes="Bold"/>
+
+                                        <Label Text="{Binding EmployeeName}"
+                                               TextColor="#B7B7C1"
+                                               FontSize="13"/>
+
+                                        <Label Text="{Binding Summary}"
+                                               TextColor="#B8A3EE"
+                                               FontSize="13"/>
+                                    </VerticalStackLayout>
+
+                                    <!-- Кнопка PDF: зелёная, с отдельной иконкой загрузки -->
+                                    <Border Grid.Column="1"
+                                            BackgroundColor="#2F6F44"
+                                            Stroke="#3C8655"
+                                            StrokeThickness="1"
+                                            StrokeShape="RoundRectangle 9"
+                                            Padding="12,0"
+                                            HeightRequest="42"
+                                            MinimumWidthRequest="82"
+                                            VerticalOptions="Center"
+                                            IsEnabled="{Binding CanDownloadPdf}">
+
+                                        <Border.GestureRecognizers>
+                                            <TapGestureRecognizer Command="{Binding DownloadPdfCommand}"/>
+                                        </Border.GestureRecognizers>
+
+                                        <Grid ColumnDefinitions="18,Auto"
+                                              ColumnSpacing="7"
+                                              HorizontalOptions="Center"
+                                              VerticalOptions="Center">
+
+                                            <shapes:Path Grid.Column="0"
+                                                         Data="M 10,1 L 10,11 M 5,7 L 10,12 L 15,7 M 3,14 L 3,18 L 17,18 L 17,14"
+                                                         WidthRequest="18"
+                                                         HeightRequest="18"
+                                                         Stroke="#FFFFFF"
+                                                         StrokeThickness="1.8"
+                                                         StrokeLineCap="Round"
+                                                         StrokeLineJoin="Round"
+                                                         HorizontalOptions="Center"
+                                                         VerticalOptions="Center"/>
+
+                                            <Label Grid.Column="1"
+                                                   Text="{Binding DownloadButtonText}"
+                                                   TextColor="White"
+                                                   FontSize="12"
+                                                   FontAttributes="Bold"
+                                                   VerticalOptions="Center"/>
+                                        </Grid>
+                                    </Border>
+
+                                    <!-- Кнопка раскрытия -->
+                                    <Border Grid.Column="2"
+                                            WidthRequest="42"
+                                            HeightRequest="42"
+                                            BackgroundColor="#36313D"
+                                            Stroke="#65557A"
+                                            StrokeThickness="1"
+                                            StrokeShape="RoundRectangle 21"
+                                            HorizontalOptions="Center"
+                                            VerticalOptions="Center">
+
+                                        <Border.GestureRecognizers>
+                                            <TapGestureRecognizer Command="{Binding ToggleCommand}"/>
+                                        </Border.GestureRecognizers>
+
+                                        <shapes:Path Data="M 4,5 L 10,11 L 16,5"
+                                                     WidthRequest="20"
+                                                     HeightRequest="14"
+                                                     Stroke="#D4C3FF"
+                                                     StrokeThickness="2.2"
+                                                     StrokeLineCap="Round"
+                                                     StrokeLineJoin="Round"
+                                                     HorizontalOptions="Center"
+                                                     VerticalOptions="Center">
+                                            <shapes:Path.Triggers>
+                                                <DataTrigger TargetType="shapes:Path"
+                                                             Binding="{Binding IsExpanded}"
+                                                             Value="True">
+                                                    <Setter Property="Rotation"
+                                                            Value="180"/>
+                                                </DataTrigger>
+                                            </shapes:Path.Triggers>
+                                        </shapes:Path>
+                                    </Border>
+                                </Grid>
+
+                                <!-- Подробности смены -->
+                                <VerticalStackLayout IsVisible="{Binding IsExpanded}"
+                                                     Spacing="13"
+                                                     Padding="20,0,20,18">
+
+                                    <BoxView HeightRequest="1"
+                                             Color="#414141"/>
+
+                                    <Grid ColumnDefinitions="140,*"
+                                          ColumnSpacing="12">
+                                        <Label Text="Открытие"
+                                               FontSize="12"
+                                               TextColor="#9999A3"/>
+                                        <Label Grid.Column="1"
+                                               Text="{Binding OpenText}"
+                                               FontSize="12"
+                                               TextColor="#D7D7DF"
+                                               LineBreakMode="WordWrap"/>
+                                    </Grid>
+
+                                    <Grid ColumnDefinitions="140,*"
+                                          ColumnSpacing="12">
+                                        <Label Text="Закрытие"
+                                               FontSize="12"
+                                               TextColor="#9999A3"/>
+                                        <Label Grid.Column="1"
+                                               Text="{Binding CloseText}"
+                                               FontSize="12"
+                                               TextColor="#D7D7DF"
+                                               LineBreakMode="WordWrap"/>
+                                    </Grid>
+
+                                    <Grid ColumnDefinitions="140,*"
+                                          ColumnSpacing="12">
+                                        <Label Text="Детали смены"
+                                               FontSize="12"
+                                               TextColor="#9999A3"/>
+                                        <Label Grid.Column="1"
+                                               Text="{Binding Details}"
+                                               FontSize="12"
+                                               TextColor="#D4C3FF"
+                                               LineBreakMode="WordWrap"/>
+                                    </Grid>
                                 </VerticalStackLayout>
-                                <Border Grid.Column="1" BackgroundColor="#36313D" Stroke="#65557A" StrokeShape="RoundRectangle 20"
-                        WidthRequest="36" HeightRequest="36" VerticalOptions="Center">
-                                    <Label Text="{Binding Arrow}" TextColor="#D4C3FF" FontSize="18"
-                         VerticalOptions="Center" HorizontalOptions="Center" InputTransparent="True"/>
-                                </Border>
-                            </Grid>
-                            <VerticalStackLayout IsVisible="{Binding IsExpanded}" Padding="20,0,20,18" Spacing="9">
-                                <BoxView Color="#414141" HeightRequest="1"/>
-                                <Label Text="{Binding OpenText}" TextColor="#D7D7DF"/>
-                                <Label Text="{Binding CloseText}" TextColor="#D7D7DF"/>
-                                <Label Text="{Binding Details}" TextColor="#D4C3FF"/>
                             </VerticalStackLayout>
-                        </VerticalStackLayout>
-                    </Border>
-                </DataTemplate>
-            </CollectionView.ItemTemplate>
-        </CollectionView>
-        <ActivityIndicator Grid.Row="3" IsRunning="{Binding IsBusy}" IsVisible="{Binding IsBusy}" Color="#B8A3EE" VerticalOptions="Center" HorizontalOptions="Center"/>
-        <Label Grid.Row="3" Text="Записей не найдено" IsVisible="{Binding IsEmpty}" TextColor="#9999A3" HorizontalOptions="Center" VerticalOptions="Center"/>
+                        </Border>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+
+            <Label Text="Записей не найдено"
+                   IsVisible="{Binding IsEmpty}"
+                   TextColor="#9999A3"
+                   FontSize="15"
+                   HorizontalOptions="Center"
+                   VerticalOptions="Center"/>
+
+            <ActivityIndicator IsRunning="{Binding IsBusy}"
+                               IsVisible="{Binding IsBusy}"
+                               Color="#B8A3EE"
+                               HorizontalOptions="Center"
+                               VerticalOptions="Center"/>
+        </Grid>
+
+        <!-- Ошибка загрузки -->
+        <Label Grid.Row="4"
+               Text="{Binding ErrorMessage}"
+               IsVisible="{Binding HasError}"
+               TextColor="#F08D8D"
+               FontSize="12"/>
     </Grid>
 </ContentView>
